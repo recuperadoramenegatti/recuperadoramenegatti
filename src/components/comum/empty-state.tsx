@@ -22,14 +22,14 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 text-center',
+        'flex flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--borda-1)] text-center',
         compacto ? 'gap-2 px-6 py-8' : 'gap-3 px-8 py-14',
         className,
       )}
     >
       <div
         className={cn(
-          'flex items-center justify-center rounded-2xl border border-white/10 bg-white/5',
+          'flex items-center justify-center rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-3)]',
           compacto ? 'h-10 w-10' : 'h-14 w-14',
         )}
       >

@@ -232,7 +232,10 @@ export function montarDRE(
     receitaLiquida: arredondar(receitaLiquida),
     custosVariaveis: arredondar(custosVariaveis),
     margemContribuicao: arredondar(margemContribuicao),
-    margemContribuicaoPct: arredondar(dividir(margemContribuicao, receitaBruta) * 100, 1),
+    // Sobre a receita LÍQUIDA — mesma base usada na precificação de cada OS,
+    // para que a margem do orçamento e a do resultado do mês sejam o mesmo
+    // número medido do mesmo jeito.
+    margemContribuicaoPct: arredondar(dividir(margemContribuicao, receitaLiquida) * 100, 1),
     custosFixosProducao: arredondar(custosFixosProducao),
     despesasFixas: arredondar(despesasFixas),
     ebitda: arredondar(ebitda),
@@ -292,11 +295,15 @@ export function calcularWaterfall(dre: ResultadoDRE): PassoWaterfall[] {
     } else if (passo.tipo === 'total') {
       saida.push({ nome: passo.nome, valor: arredondar(acumulado), base: 0, tipo: 'total' });
     } else {
+      // Aresta inferior da barra flutuante. Não pode ser truncada em zero:
+      // quando o acumulado fica negativo — o que acontece sempre que os
+      // custos superam a receita — truncar empilharia a barra a partir do
+      // zero e a cascata deixaria de fechar.
       const base = passo.delta >= 0 ? acumulado : acumulado + passo.delta;
       saida.push({
         nome: passo.nome,
         valor: arredondar(Math.abs(passo.delta)),
-        base: arredondar(Math.max(0, base)),
+        base: arredondar(base),
         tipo: passo.tipo,
       });
       acumulado += passo.delta;
@@ -337,6 +344,10 @@ export async function calcularFluxoCaixa(
 
   const entradas = new Array<number>(totalDias + 1).fill(0);
   const saidas = new Array<number>(totalDias + 1).fill(0);
+  // Parcela de cada dia que já aconteceu de fato, para separar o realizado
+  // da projeção — são leituras diferentes e não podem virar uma linha só.
+  const entradasReais = new Array<number>(totalDias + 1).fill(0);
+  const saidasReais = new Array<number>(totalDias + 1).fill(0);
 
   const dentroDoMes = (data: Date): number | null => {
     if (data < inicio || data > fim) return null;
@@ -406,8 +417,12 @@ export async function calcularFluxoCaixa(
         const dia = dentroDoMes(dataEntrada);
         if (dia !== null) {
           entradas[dia] = (entradas[dia] ?? 0) + valor;
-          if (realizada) entradasRealizadas += valor;
-          else entradasPrevistas += valor;
+          if (realizada) {
+            entradasRealizadas += valor;
+            entradasReais[dia] = (entradasReais[dia] ?? 0) + valor;
+          } else {
+            entradasPrevistas += valor;
+          }
         }
       }
 
@@ -437,11 +452,19 @@ export async function calcularFluxoCaixa(
     for (const l of lancamentos) {
       const dia = dentroDoMes(l.dataPagamento ?? l.data);
       if (dia === null) continue;
+      // Um lançamento com data de pagamento preenchida já saiu ou entrou.
+      const efetivado = l.dataPagamento !== null;
       if (l.tipo === 'receita') {
         entradas[dia] = (entradas[dia] ?? 0) + l.valor;
-        entradasPrevistas += l.valor;
+        if (efetivado) {
+          entradasRealizadas += l.valor;
+          entradasReais[dia] = (entradasReais[dia] ?? 0) + l.valor;
+        } else {
+          entradasPrevistas += l.valor;
+        }
       } else {
         saidas[dia] = (saidas[dia] ?? 0) + l.valor;
+        if (efetivado) saidasReais[dia] = (saidasReais[dia] ?? 0) + l.valor;
       }
     }
   } catch (erro) {
@@ -449,8 +472,16 @@ export async function calcularFluxoCaixa(
   }
 
   // ── Saídas fixas: folha no dia 5, demais rateadas nos dias úteis ──────
+  const hoje = new Date();
+  const ehMesCorrente = periodoDe(hoje) === periodo;
+  const diaDeHoje = ehMesCorrente ? hoje.getDate() : totalDias;
+  const ehPassado = (dia: number): boolean => !ehMesCorrente ? inicio < hoje : dia <= diaDeHoje;
+
   const diaFolha = Math.min(5, totalDias);
   saidas[diaFolha] = (saidas[diaFolha] ?? 0) + derivados.folhaComEncargos;
+  if (ehPassado(diaFolha)) {
+    saidasReais[diaFolha] = (saidasReais[diaFolha] ?? 0) + derivados.folhaComEncargos;
+  }
 
   const outrosFixos =
     p.despesasAdministrativas +
@@ -462,32 +493,48 @@ export async function calcularFluxoCaixa(
     p.outrasDespesasFixas;
   const diaFixos = Math.min(10, totalDias);
   saidas[diaFixos] = (saidas[diaFixos] ?? 0) + outrosFixos;
+  if (ehPassado(diaFixos)) saidasReais[diaFixos] = (saidasReais[diaFixos] ?? 0) + outrosFixos;
 
   // ── Consolidação dia a dia ───────────────────────────────────────────
   const dias: DiaFluxoCaixa[] = [];
   let acumulado = saldoInicial;
+  let acumuladoReal = saldoInicial;
   let totalEntradas = 0;
   let totalSaidas = 0;
   let diasNegativos = 0;
 
+  const [ano, mes] = periodo.split('-');
+
   for (let d = 1; d <= totalDias; d += 1) {
     const entradaDia = arredondar(entradas[d] ?? 0);
     const saidaDia = arredondar(saidas[d] ?? 0);
+    const entradaReal = arredondar(entradasReais[d] ?? 0);
+    const saidaReal = arredondar(saidasReais[d] ?? 0);
+
     const saldoDia = arredondar(entradaDia - saidaDia);
     acumulado = arredondar(acumulado + saldoDia);
+    acumuladoReal = arredondar(acumuladoReal + entradaReal - saidaReal);
+
     totalEntradas += entradaDia;
     totalSaidas += saidaDia;
     if (acumulado < 0) diasNegativos += 1;
 
-    const [ano, mes] = periodo.split('-');
+    const passado = d <= diaDeHoje;
+
     dias.push({
       data: `${ano}-${mes}-${String(d).padStart(2, '0')}`,
       dia: d,
       entradas: entradaDia,
       saidas: saidaDia,
+      entradasRealizadas: entradaReal,
+      saidasRealizadas: saidaReal,
       saldoDia,
       saldoAcumulado: acumulado,
+      // A linha do realizado morre em hoje: projetar o passado não faz
+      // sentido, e continuá-la no futuro fingiria certeza que não existe.
+      saldoRealizado: passado ? acumuladoReal : null,
       negativo: acumulado < 0,
+      passado,
     });
   }
 
@@ -515,28 +562,39 @@ export async function calcularFluxoCaixa(
   };
 }
 
+export interface MesFluxoAnual {
+  periodo: string;
+  label: string;
+  entradas: number;
+  saidas: number;
+  saldo: number;
+  /** Parcela das entradas efetivamente recebida no mês. */
+  entradasRealizadas: number;
+  /** O que ainda depende de recebimento futuro. */
+  entradasPrevistas: number;
+  saldoRealizado: number;
+}
+
 /** Série anual projetado × realizado, para o relatório de fluxo. */
-export async function calcularFluxoAnual(
-  ano: number,
-): Promise<Array<{ periodo: string; label: string; entradas: number; saidas: number; saldo: number }>> {
+export async function calcularFluxoAnual(ano: number): Promise<MesFluxoAnual[]> {
   const ctx = await getContextoCalculo();
-  const saida: Array<{
-    periodo: string;
-    label: string;
-    entradas: number;
-    saidas: number;
-    saldo: number;
-  }> = [];
+  const saida: MesFluxoAnual[] = [];
 
   for (let mes = 1; mes <= 12; mes += 1) {
     const periodo = `${ano}-${String(mes).padStart(2, '0')}`;
     const fluxo = await calcularFluxoCaixa(periodo, 0, ctx);
+
+    const saidasRealizadas = fluxo.dias.reduce((acc, d) => acc + d.saidasRealizadas, 0);
+
     saida.push({
       periodo,
       label: periodo,
       entradas: fluxo.totalEntradas,
       saidas: fluxo.totalSaidas,
       saldo: arredondar(fluxo.totalEntradas - fluxo.totalSaidas),
+      entradasRealizadas: fluxo.entradasRealizadas,
+      entradasPrevistas: fluxo.entradasPrevistas,
+      saldoRealizado: arredondar(fluxo.entradasRealizadas - saidasRealizadas),
     });
   }
 

@@ -3,15 +3,22 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "prisma generate && next build",
-    "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "setup": "prisma generate && prisma db push && prisma db seed"
+    "dev": "next dev",
+    "lint": "next lint",
+    "setup": "prisma generate && prisma db push && prisma db seed",
+    "smoke": "tsx scripts/smoke-os.ts",
+    "smoke:backup": "tsx scripts/smoke-backup.ts",
+    "smoke:tarefas": "tsx scripts/smoke-tarefas.ts",
+    "start": "next start",
+    "start:rede": "next start -H 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "verificar": "tsx scripts/verificar-calculos.ts",
+    "verificar:eixos": "node scripts/verificar-eixos.mjs",
+    "verificar:instalacao": "node scripts/verificar-instalacao.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

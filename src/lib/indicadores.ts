@@ -20,7 +20,7 @@ import {
   resumirPeriodo,
   type OSAgregavel,
 } from '@/lib/calculos';
-import { calcularDRE } from '@/lib/dre';
+import { calcularDRE, calcularFluxoCaixa } from '@/lib/dre';
 import type {
   ContextoCalculo,
   FaixaHistograma,
@@ -114,9 +114,20 @@ export async function calcularPainelIndicadores(
   const pctAbaixoMinimo = arredondar(dividir(resumo.osAbaixoMinimo, ordens.length) * 100, 1);
 
   // ── Financeiros ────────────────────────────────────────────────────────
-  const breakEven = calcularBreakEven(p, resumo.margemContribuicaoPct, resumo.faturamento);
+  const breakEven = calcularBreakEven(p, resumo.margemVariavelPct, resumo.faturamento);
   const faturamentoDiario = dividir(resumo.faturamento, diasNoPeriodo(periodo));
-  const ncg = calcularNCG(p.pmrDias, p.pmpDias, faturamentoDiario);
+
+  // Dias de caixa: quanto tempo a operação se sustenta com o saldo projetado
+  // ao ritmo de saída atual. Usa o fluxo do período, não uma estimativa.
+  const fluxo = await calcularFluxoCaixa(periodo, 0, contexto);
+  const saidaDiariaMedia = dividir(fluxo.totalSaidas, diasNoPeriodo(periodo));
+  const ncg = calcularNCG(
+    p.pmrDias,
+    p.pmpDias,
+    faturamentoDiario,
+    Math.max(0, fluxo.saldoFinal),
+    saidaDiariaMedia,
+  );
 
   // ── Risco ──────────────────────────────────────────────────────────────
   const risco = await calcularIndicadoresRisco(periodo, ordens, resumo.faturamento);
@@ -187,6 +198,14 @@ export async function calcularPainelIndicadores(
         ind('pmp', 'PMP', p.pmpDias, 'dias', 'Prazo médio de pagamento a fornecedores.'),
         ind('ncg', 'Necessidade de capital de giro', ncg.ncg, 'moeda', 'Capital imobilizado no ciclo financeiro.', { melhorQuando: 'menor' }),
         ind('ciclo_financeiro', 'Ciclo financeiro', ncg.cicloFinanceiro, 'dias', 'PMR menos PMP.', { melhorQuando: 'menor' }),
+        ind(
+          'dias_de_caixa',
+          'Dias de caixa disponível',
+          ncg.diasDeCaixa,
+          'dias',
+          'Por quantos dias o saldo projetado sustenta a operação no ritmo de saída atual.',
+          { referencia: 30 },
+        ),
       ],
     },
     {

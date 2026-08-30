@@ -86,6 +86,12 @@ export function formatarDataInput(valor: Date | string | null | undefined): stri
   return data ? format(data, 'yyyy-MM-dd') : '';
 }
 
+/** Maiúscula só na primeira letra — `capitalize` do CSS capitaliza cada palavra. */
+export function capitalizarPrimeira(texto: string): string {
+  if (!texto) return texto;
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
 /** "agosto de 2026" */
 export function formatarPeriodoExtenso(periodo: string): string {
   const [ano, mes] = periodo.split('-');

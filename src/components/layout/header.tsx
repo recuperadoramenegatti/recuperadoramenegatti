@@ -28,7 +28,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { formatarPeriodoExtenso, iniciais, periodoAtual } from '@/lib/formatacao';
+import { formatarPeriodoExtenso, iniciais, periodoAtual,
+  capitalizarPrimeira,
+} from '@/lib/formatacao';
 
 interface HeaderProps {
   nomeUsuario: string;
@@ -52,15 +54,25 @@ export function Header({
 
   const migalhas = React.useMemo(() => {
     const partes = pathname.split('/').filter(Boolean);
-    const acumulado: Array<{ href: string; titulo: string }> = [];
+    const acumulado: Array<{ href: string; titulo: string; navegavel: boolean }> = [];
     let caminho = '';
+
     for (const parte of partes) {
       caminho += `/${parte}`;
-      const titulo =
-        TITULOS_ROTA[caminho] ??
-        (parte.length > 20 ? 'Detalhe' : parte.charAt(0).toUpperCase() + parte.slice(1));
-      acumulado.push({ href: caminho, titulo });
+      const conhecida = TITULOS_ROTA[caminho];
+      acumulado.push({
+        href: caminho,
+        titulo:
+          conhecida ??
+          // Ids de detalhe são longos e não dizem nada ao usuário.
+          (parte.length > 20 ? 'Detalhe' : parte.charAt(0).toUpperCase() + parte.slice(1)),
+        // Só vira link o que é uma rota de verdade. "/financeiro", por
+        // exemplo, é apenas um segmento de agrupamento: transformá-lo em
+        // link faria o Next prefetchar uma página inexistente.
+        navegavel: conhecida !== undefined,
+      });
     }
+
     return acumulado;
   }, [pathname]);
 
@@ -71,7 +83,7 @@ export function Header({
   };
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b border-white/[0.07] bg-background/70 px-6 backdrop-blur-xl">
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b border-[var(--borda-0)] bg-background/70 px-6 backdrop-blur-xl">
       <nav aria-label="Trilha de navegação" className="flex min-w-0 items-center gap-1.5 text-sm">
         {migalhas.map((migalha, indice) => (
           <React.Fragment key={migalha.href}>
@@ -80,18 +92,20 @@ export function Header({
             ) : null}
             {indice === migalhas.length - 1 ? (
               <span className="truncate font-medium">{migalha.titulo}</span>
-            ) : (
+            ) : migalha.navegavel ? (
               <Link
                 href={migalha.href}
                 className="truncate text-muted-foreground transition-colors hover:text-foreground"
               >
                 {migalha.titulo}
               </Link>
+            ) : (
+              <span className="truncate text-muted-foreground">{migalha.titulo}</span>
             )}
           </React.Fragment>
         ))}
-        <span className="ml-3 hidden shrink-0 text-xs capitalize text-muted-foreground/70 lg:inline">
-          · {formatarPeriodoExtenso(periodoAtual())}
+        <span className="ml-3 hidden shrink-0 text-xs text-muted-foreground/70 lg:inline">
+          · {capitalizarPrimeira(formatarPeriodoExtenso(periodoAtual()))}
         </span>
       </nav>
 
@@ -107,7 +121,7 @@ export function Header({
           <TooltipTrigger asChild>
             <Link
               href="/dashboard#alertas"
-              className="relative flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+              className="relative flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-[var(--superficie-3)] hover:text-foreground"
               aria-label={`${totalAlertas} alertas ativos`}
             >
               <Bell className="h-[18px] w-[18px]" aria-hidden />
@@ -135,7 +149,7 @@ export function Header({
               <button
                 type="button"
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-[var(--superficie-3)] hover:text-foreground"
                 aria-label={theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'}
               >
                 {theme === 'dark' ? (
@@ -156,7 +170,7 @@ export function Header({
             <button
               type="button"
               className={cn(
-                'flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] py-1.5 pl-1.5 pr-3 transition-colors hover:bg-white/[0.07]',
+                'flex items-center gap-2 rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] py-1.5 pl-1.5 pr-3 transition-colors hover:bg-[var(--superficie-3)]',
               )}
               aria-label="Menu do usuário"
             >
