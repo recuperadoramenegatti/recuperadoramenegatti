@@ -31,7 +31,10 @@ import {
   resumirPeriodo,
   type OSAgregavel,
 } from '@/lib/calculos';
+import { ordenarAlertas } from '@/lib/alertas-cliente';
 import type { Alerta, ContextoCalculo, NivelAlerta } from '@/types';
+
+export { contarPorNivel, ordenarAlertas } from '@/lib/alertas-cliente';
 
 interface EntradaAlerta {
   regra: string;
@@ -66,8 +69,6 @@ function hashTexto(texto: string): number {
   return h;
 }
 
-const PESO_NIVEL: Record<NivelAlerta, number> = { critico: 0, alto: 1, medio: 2, baixo: 3 };
-
 /**
  * Avalia todas as regras e devolve os alertas ativos, ordenados por
  * urgência e depois por impacto financeiro.
@@ -78,12 +79,7 @@ export async function calcularAlertas(
 ): Promise<Alerta[]> {
   try {
     const contexto = ctx ?? (await getContextoCalculo());
-    const alertas = await avaliarRegras(periodo, contexto);
-    return alertas.sort((a, b) => {
-      const porNivel = PESO_NIVEL[a.nivel] - PESO_NIVEL[b.nivel];
-      if (porNivel !== 0) return porNivel;
-      return (b.impactoFinanceiro ?? 0) - (a.impactoFinanceiro ?? 0);
-    });
+    return ordenarAlertas(await avaliarRegras(periodo, contexto));
   } catch (erro) {
     console.error('[alertas] Falha ao calcular alertas:', erro);
     return [];
@@ -500,9 +496,3 @@ export function alertasDaOS(
   return saida;
 }
 
-/** Contagem por nível, para badges. */
-export function contarPorNivel(alertas: Alerta[]): Record<NivelAlerta, number> {
-  const contagem: Record<NivelAlerta, number> = { critico: 0, alto: 0, medio: 0, baixo: 0 };
-  for (const a of alertas) contagem[a.nivel] += 1;
-  return contagem;
-}
