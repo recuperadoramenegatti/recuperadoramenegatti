@@ -1,0 +1,25 @@
+# Serviço de usuário do sistema Menegatti.
+#
+# Instalado por instalar.sh em ~/.config/systemd/user/menegatti.service,
+# com __PASTA__ e __NODE__ substituídos pelos caminhos reais.
+#
+# É um serviço de usuário, e não de sistema, de propósito: roda com a mesma
+# conta dona do arquivo do banco e da pasta de backups, o que elimina a
+# classe de problema mais comum numa instalação assim, a de permissão.
+
+[Unit]
+Description=Sistema de gestão financeira da Recuperadora Menegatti
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=__PASTA__
+ExecStart=__NODE__ run start:rede
+Restart=on-failure
+RestartSec=10
+# O sistema guarda dados financeiros: nada de log verboso em disco.
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

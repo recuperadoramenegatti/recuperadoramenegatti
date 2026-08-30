@@ -26,6 +26,15 @@ Anthropic, usada apenas no Centro de Inteligência.
 
 ## Instalação
 
+**Para instalar na máquina da empresa, siga o guia passo a passo:
+[docs/INSTALACAO.md](docs/INSTALACAO.md).** Ele é escrito para quem não
+programa: dois cliques em `instalar.bat` no Windows, ou `./instalar.sh` no
+Linux e no macOS. O instalador cuida de tudo — dependências, segredo de
+sessão, banco, compilação, atalho na área de trabalho e início automático
+junto com o computador.
+
+O que segue é o caminho manual, para quem vai mexer no código.
+
 Requisitos: **Node.js 20 ou superior**. Nada mais — nem banco de dados, nem
 Docker.
 
@@ -56,13 +65,29 @@ npm run build
 npm start
 ```
 
+### Acesso pela rede da oficina
+
+`npm start` escuta apenas neste computador. Para que o sistema seja alcançável
+de outra máquina — o escritório e o chão de fábrica, por exemplo:
+
+```bash
+npm run start:rede          # escuta em 0.0.0.0, porta 3000
+PORT=3001 npm run start:rede  # em outra porta, se a 3000 estiver ocupada
+```
+
+O endereço a digitar na outra máquina é impresso por:
+
+```bash
+node scripts/rede.mjs
+```
+
+O login continua sendo exigido — abrir na rede não dá acesso livre.
+
 ### Deixar rodando sozinho
 
-Para que o sistema suba junto com o computador, o caminho mais simples no
-Windows é criar um atalho na pasta de Inicialização apontando para um `.bat`
-com `npm start` dentro da pasta do projeto. No Linux, um serviço systemd
-resolve. Em ambos os casos o acesso continua sendo pelo navegador, em
-`localhost:3000`.
+O `instalar.sh` já configura um serviço de usuário do systemd, e o
+`instalar.bat` cria o atalho na pasta Inicializar do Windows. Os detalhes e as
+alternativas estão em [docs/INSTALACAO.md](docs/INSTALACAO.md).
 
 ---
 
@@ -367,10 +392,18 @@ perto da peça nova e queda de faturamento em dois meses seguidos.
 ## Estrutura do projeto
 
 ```
+instalar.bat / instalar.sh  instalação em um passo
+abrir.bat                   atalho do dia a dia (liga o servidor se preciso)
+iniciar.bat / iniciar.sh    sobe o servidor
+docs/
+  INSTALACAO.md           guia para quem não programa
 prisma/
   schema.prisma           modelo de dados
   seed.ts                 parâmetros calibrados + usuário admin
 scripts/
+  preparar-ambiente.mjs   cria o .env com um segredo exclusivo
+  rede.mjs                mostra os endereços de acesso
+  windows/ linux/         atalhos e serviço de cada sistema
   verificar-calculos.ts   58 conferências do motor de cálculo
   smoke-os.ts             teste de ponta a ponta contra o banco
   smoke-backup.ts         backup: exportar, validar, apagar, restaurar
@@ -407,7 +440,8 @@ backups/                  backups locais (fora do controle de versão)
 | ---------------------- | ----------------------------------------------- |
 | `npm run dev`          | Servidor de desenvolvimento                     |
 | `npm run build`        | Compila para produção                           |
-| `npm start`            | Roda a versão compilada                         |
+| `npm start`            | Roda a versão compilada (só neste computador)   |
+| `npm run start:rede`   | Roda acessível pela rede local da oficina       |
 | `npm run setup`        | Cria o banco e carrega os parâmetros iniciais   |
 | `npm run db:studio`    | Abre o navegador de dados do Prisma             |
 | `npm run verificar`    | Confere o motor de cálculo                      |
