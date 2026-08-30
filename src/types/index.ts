@@ -237,7 +237,8 @@ export interface ComparativoPecaNova {
 
 export interface BreakEvenResult {
   custosFixosMensais: number;
-  margemContribuicaoPct: number;
+  /** % da receita líquida que sobra após os custos variáveis (insumos). */
+  margemVariavelPct: number;
   pontoEquilibrioReceita: number;
   pontoEquilibrioHoras: number;
   faturamentoAtual: number;

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { FormularioLogin } from '@/app/(auth)/login/formulario-login';
 import { LogoCompleto } from '@/components/comum/logo';
 import { getConfig } from '@/lib/calculos';
@@ -45,7 +46,9 @@ export default async function PaginaLogin(): Promise<React.JSX.Element> {
           <p className="mt-1 text-sm text-muted-foreground">
             Informe suas credenciais para continuar.
           </p>
-          <FormularioLogin className="mt-6" />
+          <Suspense fallback={<EsqueletoFormulario />}>
+            <FormularioLogin className="mt-6" />
+          </Suspense>
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
@@ -53,5 +56,18 @@ export default async function PaginaLogin(): Promise<React.JSX.Element> {
         </p>
       </div>
     </main>
+  );
+}
+
+/** Placeholder enquanto o formulário (client component) hidrata. */
+function EsqueletoFormulario(): React.JSX.Element {
+  return (
+    <div className="mt-6 space-y-4" aria-hidden>
+      <div className="skeleton h-3 w-16" />
+      <div className="skeleton h-10 w-full" />
+      <div className="skeleton h-3 w-12" />
+      <div className="skeleton h-10 w-full" />
+      <div className="skeleton h-12 w-full" />
+    </div>
   );
 }

@@ -114,7 +114,7 @@ export async function calcularPainelIndicadores(
   const pctAbaixoMinimo = arredondar(dividir(resumo.osAbaixoMinimo, ordens.length) * 100, 1);
 
   // ── Financeiros ────────────────────────────────────────────────────────
-  const breakEven = calcularBreakEven(p, resumo.margemContribuicaoPct, resumo.faturamento);
+  const breakEven = calcularBreakEven(p, resumo.margemVariavelPct, resumo.faturamento);
   const faturamentoDiario = dividir(resumo.faturamento, diasNoPeriodo(periodo));
   const ncg = calcularNCG(p.pmrDias, p.pmpDias, faturamentoDiario);
 

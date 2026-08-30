@@ -232,7 +232,10 @@ export function montarDRE(
     receitaLiquida: arredondar(receitaLiquida),
     custosVariaveis: arredondar(custosVariaveis),
     margemContribuicao: arredondar(margemContribuicao),
-    margemContribuicaoPct: arredondar(dividir(margemContribuicao, receitaBruta) * 100, 1),
+    // Sobre a receita LÍQUIDA — mesma base usada na precificação de cada OS,
+    // para que a margem do orçamento e a do resultado do mês sejam o mesmo
+    // número medido do mesmo jeito.
+    margemContribuicaoPct: arredondar(dividir(margemContribuicao, receitaLiquida) * 100, 1),
     custosFixosProducao: arredondar(custosFixosProducao),
     despesasFixas: arredondar(despesasFixas),
     ebitda: arredondar(ebitda),

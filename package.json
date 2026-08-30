@@ -11,7 +11,9 @@
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "setup": "prisma generate && prisma db push && prisma db seed"
+    "setup": "prisma generate && prisma db push && prisma db seed",
+    "verificar": "tsx scripts/verificar-calculos.ts",
+    "smoke": "tsx scripts/smoke-os.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

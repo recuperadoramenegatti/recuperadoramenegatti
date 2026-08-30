@@ -268,7 +268,7 @@ async function avaliarRegras(periodo: string, ctx: ContextoCalculo): Promise<Ale
   }
 
   // ── Regra 6 — Ponto de equilíbrio em risco ───────────────────────────────
-  const breakEven = calcularBreakEven(p, resumo.margemContribuicaoPct, resumo.faturamento);
+  const breakEven = calcularBreakEven(p, resumo.margemVariavelPct, resumo.faturamento);
   if (resumo.faturamento > 0 && resumo.faturamento < breakEven.pontoEquilibrioReceita * 1.1) {
     const distancia = arredondar(breakEven.pontoEquilibrioReceita - resumo.faturamento);
     saida.push(
