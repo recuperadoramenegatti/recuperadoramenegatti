@@ -46,7 +46,7 @@ export function AbaCentros({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+      <div className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
         <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
@@ -220,7 +220,7 @@ function LinhaCentro({
       className={cn(
         'grid items-end gap-3 rounded-xl border p-3.5 transition-colors',
         'grid-cols-1 sm:grid-cols-[minmax(0,1.6fr)_88px_88px_110px_auto]',
-        alterado ? 'border-primary/40 bg-primary/[0.05]' : 'border-white/10 bg-white/[0.03]',
+        alterado ? 'border-primary/40 bg-primary/[0.05]' : 'border-[var(--borda-1)] bg-[var(--superficie-2)]',
         !dados.ativo && 'opacity-60',
       )}
     >

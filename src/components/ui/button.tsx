@@ -14,10 +14,10 @@ const buttonVariants = cva(
         default:
           'bg-gradient-hero text-black shadow-lg shadow-amber-500/20 hover:shadow-amber-500/35 hover:brightness-110',
         secondary:
-          'border border-white/10 bg-white/5 text-foreground backdrop-blur-sm hover:bg-white/10',
+          'border border-[var(--borda-1)] bg-[var(--superficie-3)] text-foreground backdrop-blur-sm hover:bg-[var(--superficie-4)]',
         outline:
-          'border border-white/15 bg-transparent text-foreground hover:border-white/25 hover:bg-white/5',
-        ghost: 'text-muted-foreground hover:bg-white/5 hover:text-foreground',
+          'border border-[var(--borda-2)] bg-transparent text-foreground hover:border-[var(--borda-2)] hover:bg-[var(--superficie-3)]',
+        ghost: 'text-muted-foreground hover:bg-[var(--superficie-3)] hover:text-foreground',
         destructive: 'bg-gradient-alerta text-white shadow-lg shadow-red-500/20 hover:brightness-110',
         success: 'bg-gradient-sucesso text-white shadow-lg shadow-emerald-500/20 hover:brightness-110',
         ia: 'bg-gradient-ia text-white shadow-lg shadow-violet-500/25 hover:brightness-110',

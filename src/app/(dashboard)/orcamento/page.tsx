@@ -70,7 +70,7 @@ function ResumoTaxas({
   contexto: Awaited<ReturnType<typeof getContextoCalculo>>;
 }): React.JSX.Element {
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-xs">
+    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] px-4 py-2.5 text-xs">
       <span className="label-caps">Taxas vigentes</span>
       <Badge variant="secondary">THH {formatarMoeda(contexto.derivados.thh)}/h</Badge>
       <Badge variant="secondary">CFR {formatarMoeda(contexto.derivados.cfr)}/h</Badge>
@@ -94,7 +94,7 @@ function EsqueletoOrcamento(): React.JSX.Element {
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
       <div className="space-y-5">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+          <div key={i} className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5">
             <div className="skeleton h-4 w-40" />
             <div className="mt-4 space-y-3">
               <div className="skeleton h-10 w-full" />

@@ -27,8 +27,8 @@ export default async function PaginaLogin(): Promise<React.JSX.Element> {
         className="pointer-events-none absolute inset-0 opacity-[0.035]"
         style={{
           backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px),' +
-            'linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
+            'linear-gradient(currentColor 1px, transparent 1px),' +
+            'linear-gradient(90deg, currentColor 1px, transparent 1px)',
           backgroundSize: '56px 56px',
         }}
       />
@@ -41,7 +41,7 @@ export default async function PaginaLogin(): Promise<React.JSX.Element> {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-7 shadow-card backdrop-blur-md">
+        <div className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-7 shadow-card backdrop-blur-md">
           <h1 className="text-lg font-semibold tracking-tight">Acesso ao sistema</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Informe suas credenciais para continuar.

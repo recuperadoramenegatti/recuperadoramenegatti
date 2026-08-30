@@ -99,7 +99,7 @@ export function RegistroHoras({
   };
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+    <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
       <header className="mb-4">
         <h2 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
           <Timer className="h-4 w-4 text-primary" aria-hidden />
@@ -153,7 +153,7 @@ export function RegistroHoras({
           );
         })}
 
-        <div className="grid grid-cols-[1fr_auto_auto] items-end gap-3 border-t border-white/10 pt-3">
+        <div className="grid grid-cols-[1fr_auto_auto] items-end gap-3 border-t border-[var(--borda-1)] pt-3">
           <div className="space-y-1.5">
             <Label htmlFor="horas-setup">Setup / preparação</Label>
             <Input
@@ -178,7 +178,7 @@ export function RegistroHoras({
         className={cn(
           'mt-4 rounded-xl border p-3.5',
           Math.abs(desvioPct) < 5
-            ? 'border-white/10 bg-white/[0.03]'
+            ? 'border-[var(--borda-1)] bg-[var(--superficie-2)]'
             : desvioPct > 0
               ? 'border-red-500/25 bg-red-500/[0.07]'
               : 'border-emerald-500/25 bg-emerald-500/[0.07]',
@@ -212,7 +212,7 @@ export function RegistroHoras({
         </dl>
 
         {Math.abs(impacto) > 1 ? (
-          <p className="mt-3 border-t border-white/10 pt-2.5 text-center text-xs text-muted-foreground">
+          <p className="mt-3 border-t border-[var(--borda-1)] pt-2.5 text-center text-xs text-muted-foreground">
             Impacto na margem:{' '}
             <span className={cn('font-medium', impacto > 0 ? 'text-red-400' : 'text-emerald-400')}>
               {impacto > 0 ? '−' : '+'}

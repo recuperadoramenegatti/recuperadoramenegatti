@@ -78,7 +78,7 @@ export function AbaEmpresa({ gerais }: { gerais: Record<string, string> }): Reac
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+      <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
         <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
           <Building2 className="h-4 w-4 text-primary" aria-hidden />
           Identificação da empresa
@@ -105,7 +105,7 @@ export function AbaEmpresa({ gerais }: { gerais: Record<string, string> }): Reac
 
           <div className="space-y-1.5">
             <Label>Logo</Label>
-            <div className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <div className="flex items-center gap-4 rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-4">
               <Logo tamanho={56} src={logo || undefined} />
               <div className="min-w-0 flex-1">
                 <input
@@ -219,7 +219,7 @@ function TrocarSenha(): React.JSX.Element {
   };
 
   return (
-    <section className="h-fit rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+    <section className="h-fit rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
       <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
         <KeyRound className="h-4 w-4 text-primary" aria-hidden />
         Credenciais de acesso
@@ -252,7 +252,7 @@ function TrocarSenha(): React.JSX.Element {
           />
           {forca ? (
             <div className="flex items-center gap-2">
-              <div className="h-1 flex-1 overflow-hidden rounded-full bg-white/10">
+              <div className="h-1 flex-1 overflow-hidden rounded-full bg-[var(--superficie-4)]">
                 <div
                   className={`h-full rounded-full transition-all duration-300 ${
                     forca.largura === 100

@@ -439,6 +439,13 @@ deliberada para que os dois números sejam comparáveis.
 Num único arquivo, `prisma/menegatti.db`. Copiar esse arquivo copia o sistema
 inteiro. É o que o backup faz, com verificação de integridade por cima.
 
+**O modo claro funciona mesmo?**
+Sim. As superfícies e bordas são tokens de tema, não sobreposições brancas
+fixas — no claro a sobreposição inverte para escura e a hierarquia visual se
+mantém. A paleta dos gráficos foi validada contra as duas superfícies. O
+sistema continua desenhado para o escuro; o claro existe para ambiente muito
+iluminado. Troque em *Configurações → Aparência* ou pelo ícone no topo.
+
 **Preciso de internet?**
 Só para os insights de IA. Orçar, faturar, ver o DRE e gerar relatórios
 funciona offline.

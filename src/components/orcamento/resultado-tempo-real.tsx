@@ -73,7 +73,7 @@ export function ResultadoTempoReal({
   return (
     <div className={cn('space-y-4', className)}>
       {/* ── Preço sugerido ─────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 shadow-card backdrop-blur-sm">
+      <div className="relative overflow-hidden rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-6 shadow-card backdrop-blur-sm">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-40"
@@ -115,7 +115,7 @@ export function ResultadoTempoReal({
       </div>
 
       {/* ── Composição do custo ────────────────────────────────────────── */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+      <div className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
         <h3 className="label-caps mb-4">Composição do custo</h3>
 
         {semDados ? (
@@ -139,7 +139,7 @@ export function ResultadoTempoReal({
                           </span>
                         </span>
                       </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+                      <div className="h-1.5 overflow-hidden rounded-full bg-[var(--superficie-4)]">
                         <div
                           className={cn('h-full rounded-full transition-all duration-500', fatia.cor)}
                           style={{ width: `${Math.min(100, Math.max(0, percentual))}%` }}
@@ -234,7 +234,7 @@ export function ResultadoTempoReal({
 
       {/* ── Detalhe por centro ─────────────────────────────────────────── */}
       {custo.linhasCentro.length > 0 ? (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+        <div className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
           <h3 className="label-caps mb-3 flex items-center gap-2">
             <TrendingUp className="h-3.5 w-3.5" aria-hidden />
             Custo por centro
@@ -254,7 +254,7 @@ export function ResultadoTempoReal({
               </li>
             ))}
             {custo.horasSetup > 0 ? (
-              <li className="flex items-baseline justify-between gap-3 border-t border-white/10 pt-2">
+              <li className="flex items-baseline justify-between gap-3 border-t border-[var(--borda-1)] pt-2">
                 <span className="text-muted-foreground">
                   Setup / preparação
                   <span className="ml-1.5 text-xs">{formatarHoras(custo.horasSetup)}</span>
@@ -287,7 +287,7 @@ function MetricaSecundaria({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div className="cursor-help rounded-xl border border-white/10 bg-white/[0.03] p-3">
+        <div className="cursor-help rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-3">
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <Icone className="h-3.5 w-3.5" />
             <span className="text-[10px] font-medium uppercase tracking-wider">{rotulo}</span>

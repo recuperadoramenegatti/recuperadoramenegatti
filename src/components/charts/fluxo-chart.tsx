@@ -12,6 +12,7 @@ import {
   YAxis,
 } from 'recharts';
 import {
+  CURSOR_LINHA,
   CaixaTooltip,
   CORES_ESTADO,
   CORES_SERIE,
@@ -101,7 +102,7 @@ export function FluxoChart({ dias }: { dias: DiaFluxoCaixa[] }): React.JSX.Eleme
             />
 
             <Tooltip
-              cursor={{ stroke: 'rgba(255,255,255,0.18)', strokeWidth: 1 }}
+              cursor={CURSOR_LINHA}
               content={({ active, payload }) => {
                 if (!active || !payload?.length) return null;
                 const dia = payload[0]?.payload as DiaFluxoCaixa | undefined;
@@ -124,7 +125,7 @@ export function FluxoChart({ dias }: { dias: DiaFluxoCaixa[] }): React.JSX.Eleme
               }}
             />
 
-            <ReferenceLine y={0} stroke="rgba(255,255,255,0.25)" strokeWidth={1} />
+            <ReferenceLine y={0} stroke="var(--borda-2)" strokeWidth={1} />
 
             <Area
               type="monotone"
@@ -134,7 +135,7 @@ export function FluxoChart({ dias }: { dias: DiaFluxoCaixa[] }): React.JSX.Eleme
               fill="url(#area-saldo)"
               isAnimationActive={false}
               dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, stroke: '#111827' }}
+              activeDot={{ r: 5, strokeWidth: 2, stroke: 'var(--superficie-grafico)' }}
             />
           </ComposedChart>
         </ResponsiveContainer>

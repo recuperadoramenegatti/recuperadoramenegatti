@@ -28,7 +28,7 @@ const BRILHOS: Record<TomKPI, string> = {
   verde: 'rgba(16,185,129,0.14)',
   vermelho: 'rgba(239,68,68,0.14)',
   roxo: 'rgba(139,92,246,0.14)',
-  neutro: 'rgba(255,255,255,0.05)',
+  neutro: 'var(--superficie-3)',
 };
 
 const BARRAS: Record<TomKPI, string> = {
@@ -37,7 +37,7 @@ const BARRAS: Record<TomKPI, string> = {
   verde: 'bg-gradient-sucesso',
   vermelho: 'bg-gradient-alerta',
   roxo: 'bg-gradient-ia',
-  neutro: 'bg-white/30',
+  neutro: 'bg-[var(--borda-2)]',
 };
 
 export interface KPICardProps {
@@ -85,7 +85,7 @@ export function KPICard({
   const ruim = inverterVariacao ? positiva : negativa;
 
   const conteudo = (
-    <div className="relative h-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover">
+    <div className="relative h-full overflow-hidden rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"

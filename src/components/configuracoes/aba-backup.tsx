@@ -136,7 +136,7 @@ export function AbaBackup({
       </div>
 
       {/* O que vai no ZIP */}
-      <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+      <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
         <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
           <FileArchive className="h-4 w-4 text-primary" aria-hidden />
           O que vai dentro do arquivo
@@ -166,7 +166,7 @@ export function AbaBackup({
       </section>
 
       {/* Backups automáticos */}
-      <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+      <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
         <h3 className="text-sm font-semibold tracking-tight">Backups automáticos</h3>
         <p className="mt-0.5 text-xs text-muted-foreground">
           Rodam sozinhos, em disco local. Nunca impedem você de salvar uma OS: se um backup falhar,
@@ -174,13 +174,13 @@ export function AbaBackup({
         </p>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
+          <div className="rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-3.5">
             <p className="text-sm font-medium">Incremental</p>
             <p className="mt-1 text-xs text-muted-foreground">
               A cada OS salva, no máximo um por hora. Mantém os 30 mais recentes.
             </p>
           </div>
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
+          <div className="rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-3.5">
             <p className="text-sm font-medium">Semanal</p>
             <p className="mt-1 text-xs text-muted-foreground">
               Todo domingo, no primeiro acesso do dia. Mantém os 12 mais recentes.
@@ -199,7 +199,7 @@ export function AbaBackup({
       </section>
 
       {/* Histórico */}
-      <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] shadow-card backdrop-blur-sm">
+      <section className="overflow-hidden rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] shadow-card backdrop-blur-sm">
         <header className="p-5 pb-3">
           <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
             <Archive className="h-4 w-4 text-primary" aria-hidden />
@@ -218,7 +218,7 @@ export function AbaBackup({
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-y border-white/10">
+                <tr className="border-y border-[var(--borda-1)]">
                   <th className="px-5 py-2.5 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     Arquivo
                   </th>
@@ -240,7 +240,7 @@ export function AbaBackup({
                 {backups.map((backup) => (
                   <tr
                     key={backup.id}
-                    className="border-b border-white/[0.05] transition-colors hover:bg-white/[0.03]"
+                    className="border-b border-[var(--borda-0)] transition-colors hover:bg-[var(--superficie-2)]"
                   >
                     <td className="px-5 py-2.5 font-mono text-xs">{backup.filename}</td>
                     <td className="px-4 py-2.5">
@@ -281,7 +281,7 @@ export function AbaBackup({
 
 function ItemConteudo({ nome, descricao }: { nome: string; descricao: string }): React.JSX.Element {
   return (
-    <li className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
+    <li className="rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-3.5">
       <p className="font-mono text-xs font-medium text-primary">{nome}</p>
       <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{descricao}</p>
     </li>
@@ -414,7 +414,7 @@ function ModalRestaurar({ onRestaurado }: { onRestaurado: () => void }): React.J
               type="button"
               onClick={() => inputRef.current?.click()}
               disabled={processando}
-              className="flex w-full flex-col items-center gap-2 rounded-xl border border-dashed border-white/15 px-6 py-8 transition-colors hover:border-white/30 hover:bg-white/[0.03] disabled:opacity-50"
+              className="flex w-full flex-col items-center gap-2 rounded-xl border border-dashed border-[var(--borda-2)] px-6 py-8 transition-colors hover:border-[var(--borda-2)] hover:bg-[var(--superficie-2)] disabled:opacity-50"
             >
               <Upload className="h-6 w-6 text-muted-foreground" aria-hidden />
               <span className="text-sm font-medium">
@@ -468,7 +468,7 @@ function ModalRestaurar({ onRestaurado }: { onRestaurado: () => void }): React.J
                 ) : null}
 
                 {preview.valido ? (
-                  <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 border-t border-white/10 pt-3 text-xs">
+                  <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 border-t border-[var(--borda-1)] pt-3 text-xs">
                     {Object.entries(preview.totais)
                       .filter(([, quantidade]) => quantidade > 0)
                       .map(([tabela, quantidade]) => (
@@ -559,7 +559,7 @@ function OpcaoModo({
           ? perigoso
             ? 'border-red-500/40 bg-red-500/[0.07]'
             : 'border-primary/40 bg-primary/[0.06]'
-          : 'border-white/10 bg-white/[0.03] hover:border-white/20',
+          : 'border-[var(--borda-1)] bg-[var(--superficie-2)] hover:border-[var(--borda-2)]',
       )}
     >
       <input

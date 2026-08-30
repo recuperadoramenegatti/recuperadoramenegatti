@@ -132,7 +132,7 @@ export function AbaParametros({
         {GRUPOS_PARAMETROS.map((grupo) => (
           <section
             key={grupo.titulo}
-            className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm"
+            className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm"
           >
             <header className="mb-4">
               <h3 className="text-sm font-semibold tracking-tight">{grupo.titulo}</h3>
@@ -193,7 +193,7 @@ export function AbaParametros({
 
       {/* ── Quadro de taxas, recalculado ao vivo ─────────────────── */}
       <div className="xl:sticky xl:top-20 xl:h-fit">
-        <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+        <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
           <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
             <Calculator className="h-4 w-4 text-primary" aria-hidden />
             Taxas resultantes

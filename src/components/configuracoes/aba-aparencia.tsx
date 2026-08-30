@@ -57,7 +57,7 @@ export function AbaAparencia({ gerais }: { gerais: Record<string, string> }): Re
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+      <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
         <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
           <Palette className="h-4 w-4 text-primary" aria-hidden />
           Tema
@@ -83,7 +83,7 @@ export function AbaAparencia({ gerais }: { gerais: Record<string, string> }): Re
         </div>
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+      <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
         <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
           <Monitor className="h-4 w-4 text-primary" aria-hidden />
           Densidade da interface
@@ -100,7 +100,7 @@ export function AbaAparencia({ gerais }: { gerais: Record<string, string> }): Re
                 'flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition-colors',
                 densidade === opcao.valor
                   ? 'border-primary/40 bg-primary/[0.06]'
-                  : 'border-white/10 bg-white/[0.03] hover:border-white/20',
+                  : 'border-[var(--borda-1)] bg-[var(--superficie-2)] hover:border-[var(--borda-2)]',
               )}
             >
               <input
@@ -150,7 +150,7 @@ function OpcaoTema({
         'flex flex-col items-center gap-2 rounded-xl border p-5 transition-colors',
         ativo
           ? 'border-primary/40 bg-primary/[0.06]'
-          : 'border-white/10 bg-white/[0.03] hover:border-white/20',
+          : 'border-[var(--borda-1)] bg-[var(--superficie-2)] hover:border-[var(--borda-2)]',
       )}
     >
       <Icone className={cn('h-6 w-6', ativo ? 'text-primary' : 'text-muted-foreground')} />

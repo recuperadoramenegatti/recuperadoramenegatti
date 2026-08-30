@@ -64,7 +64,7 @@ export function PlanoAcao({
   if (acoes.length === 0) return <></>;
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+    <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
       <header className="mb-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-sm font-semibold tracking-tight">{titulo}</h2>
@@ -92,7 +92,7 @@ export function PlanoAcao({
                 'rounded-xl border p-3.5 transition-all duration-200',
                 marcada
                   ? 'border-emerald-500/25 bg-emerald-500/[0.05]'
-                  : 'border-white/10 bg-white/[0.03]',
+                  : 'border-[var(--borda-1)] bg-[var(--superficie-2)]',
               )}
             >
               <div className="flex items-start gap-3">
@@ -141,7 +141,7 @@ export function PlanoAcao({
                       </span>
                     ) : null}
                     {acao.impactoEstimado ? (
-                      <span className="rounded-md bg-white/[0.07] px-1.5 py-0.5">
+                      <span className="rounded-md bg-[var(--superficie-3)] px-1.5 py-0.5">
                         {acao.impactoEstimado}
                       </span>
                     ) : null}

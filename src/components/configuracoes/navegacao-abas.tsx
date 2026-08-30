@@ -18,7 +18,7 @@ export function NavegacaoAbas({
 }): React.JSX.Element {
   return (
     <nav
-      className="flex gap-1 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-1 scrollbar-none"
+      className="flex gap-1 overflow-x-auto rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-1 scrollbar-none"
       aria-label="Seções das configurações"
     >
       {abas.map((aba) => (
@@ -30,8 +30,8 @@ export function NavegacaoAbas({
           className={cn(
             'shrink-0 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors',
             ativa === aba.id
-              ? 'bg-white/10 text-foreground'
-              : 'text-muted-foreground hover:bg-white/5 hover:text-foreground',
+              ? 'bg-[var(--superficie-4)] text-foreground'
+              : 'text-muted-foreground hover:bg-[var(--superficie-3)] hover:text-foreground',
           )}
         >
           {aba.rotulo}

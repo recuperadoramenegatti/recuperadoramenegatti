@@ -49,7 +49,7 @@ export function ControlesFluxo({
 
   return (
     <div className="flex flex-wrap items-end gap-3">
-      <div className="flex items-center gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1">
+      <div className="flex items-center gap-1 rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-1">
         <Button
           variant="ghost"
           size="icon-sm"

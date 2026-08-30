@@ -120,7 +120,7 @@ export function ListaClientes({
           />
         </div>
 
-        <div className="flex rounded-xl border border-white/10 bg-white/[0.03] p-1">
+        <div className="flex rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-1">
           {(
             [
               ['volume', 'Volume'],
@@ -137,7 +137,7 @@ export function ListaClientes({
               className={cn(
                 'rounded-lg px-2.5 py-1 text-xs transition-colors',
                 ordenacao === chave
-                  ? 'bg-white/10 text-foreground'
+                  ? 'bg-[var(--superficie-4)] text-foreground'
                   : 'text-muted-foreground hover:text-foreground',
               )}
             >
@@ -177,7 +177,7 @@ export function ListaClientes({
           }
         />
       ) : (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-2 py-2 shadow-card backdrop-blur-sm">
+        <div className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] px-2 py-2 shadow-card backdrop-blur-sm">
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
@@ -281,7 +281,7 @@ export function ListaClientes({
                         {cliente.totalOS > 0 ? (
                           <Link
                             href={`/ordens?clienteId=${cliente.id}&visao=tabela`}
-                            className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/10 hover:text-foreground"
+                            className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-[var(--superficie-4)] hover:text-foreground"
                             aria-label={`Ver OS de ${cliente.nome}`}
                             title="Ver histórico de OS"
                           >

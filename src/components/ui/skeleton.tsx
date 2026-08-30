@@ -8,7 +8,7 @@ function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>)
 /** Placeholder de um card de KPI. */
 function SkeletonKPI(): React.JSX.Element {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card">
+    <div className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card">
       <Skeleton className="h-3 w-24" />
       <Skeleton className="mt-4 h-9 w-36" />
       <Skeleton className="mt-3 h-3 w-20" />

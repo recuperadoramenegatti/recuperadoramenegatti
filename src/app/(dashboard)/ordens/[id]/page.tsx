@@ -167,7 +167,7 @@ export default async function PaginaDetalheOS({ params }: Props): Promise<React.
               ))}
 
               {os.horasSetup > 0 ? (
-                <div className="flex items-baseline justify-between gap-3 border-t border-white/10 pt-2.5 text-sm">
+                <div className="flex items-baseline justify-between gap-3 border-t border-[var(--borda-1)] pt-2.5 text-sm">
                   <span className="text-muted-foreground">
                     Setup / preparação
                     <span className="ml-2 text-xs">{formatarHoras(os.horasSetup)}</span>
@@ -231,7 +231,7 @@ export default async function PaginaDetalheOS({ params }: Props): Promise<React.
                   <li key={log.id} className="flex gap-3">
                     <div className="flex flex-col items-center">
                       <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
-                      <span className="mt-1 w-px flex-1 bg-white/10" aria-hidden />
+                      <span className="mt-1 w-px flex-1 bg-[var(--superficie-4)]" aria-hidden />
                     </div>
                     <div className="min-w-0 flex-1 pb-1">
                       <p className="text-sm leading-snug">{log.descricao}</p>
@@ -323,7 +323,7 @@ function Cartao({
   children: React.ReactNode;
 }): React.JSX.Element {
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+    <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
       <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold tracking-tight">
         {Icone ? <Icone className="h-4 w-4 text-primary" aria-hidden /> : null}
         {titulo}

@@ -142,7 +142,7 @@ function ResumoCard({
   };
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+    <div className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
       <span className="label-caps">{rotulo}</span>
       <p className={`mt-2 text-2xl font-bold tracking-tight tabular-nums ${gradientes[tom]}`}>
         {valor}
@@ -157,7 +157,7 @@ function EsqueletoDRE(): React.JSX.Element {
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+          <div key={i} className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5">
             <div className="skeleton h-3 w-24" />
             <div className="skeleton mt-3 h-8 w-32" />
             <div className="skeleton mt-2 h-3 w-20" />

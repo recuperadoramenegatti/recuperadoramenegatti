@@ -91,9 +91,9 @@ export function SeletorCliente({
           id="cliente-busca"
           onClick={() => setAberto((v) => !v)}
           className={cn(
-            'flex h-10 w-full items-center justify-between rounded-xl border bg-white/[0.03] px-3 py-2 text-sm transition-colors',
-            'hover:border-white/20 focus:outline-none focus:ring-2 focus:ring-primary/30',
-            erro ? 'border-red-500/50' : 'border-white/10',
+            'flex h-10 w-full items-center justify-between rounded-xl border bg-[var(--superficie-2)] px-3 py-2 text-sm transition-colors',
+            'hover:border-[var(--borda-2)] focus:outline-none focus:ring-2 focus:ring-primary/30',
+            erro ? 'border-red-500/50' : 'border-[var(--borda-1)]',
           )}
           aria-haspopup="listbox"
           aria-expanded={aberto}
@@ -105,8 +105,8 @@ export function SeletorCliente({
         </button>
 
         {aberto ? (
-          <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-xl border border-white/10 bg-popover shadow-card backdrop-blur-xl">
-            <div className="flex items-center gap-2 border-b border-white/10 px-3">
+          <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-xl border border-[var(--borda-1)] bg-popover shadow-card backdrop-blur-xl">
+            <div className="flex items-center gap-2 border-b border-[var(--borda-1)] px-3">
               <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
               <input
                 autoFocus
@@ -147,7 +147,7 @@ export function SeletorCliente({
                         setAberto(false);
                         setBusca('');
                       }}
-                      className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm transition-colors hover:bg-white/10"
+                      className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm transition-colors hover:bg-[var(--superficie-4)]"
                     >
                       <Check
                         className={cn(

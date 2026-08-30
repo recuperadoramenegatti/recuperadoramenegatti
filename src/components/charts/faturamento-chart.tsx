@@ -13,6 +13,7 @@ import {
   YAxis,
 } from 'recharts';
 import {
+  CURSOR_LINHA,
   CaixaTooltip,
   CORES_SERIE,
   EIXO,
@@ -108,7 +109,7 @@ export function FaturamentoChart({ serie }: { serie: SerieMensal[] }): React.JSX
             />
 
             <Tooltip
-              cursor={{ stroke: 'rgba(255,255,255,0.18)', strokeWidth: 1 }}
+              cursor={CURSOR_LINHA}
               content={({ active, payload, label }) => {
                 if (!active || !payload?.length) return null;
                 const ponto = payload[0]?.payload as Ponto | undefined;

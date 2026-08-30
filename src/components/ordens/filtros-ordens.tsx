@@ -142,7 +142,7 @@ export function FiltrosOrdens({
             {total} {total === 1 ? 'OS' : 'OS'}
           </span>
 
-          <div className="flex rounded-xl border border-white/10 bg-white/[0.03] p-1">
+          <div className="flex rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-1">
             <BotaoVisao atual={visao} alvo="kanban" icone={LayoutGrid} rotulo="Kanban" onSelect={definir} />
             <BotaoVisao atual={visao} alvo="tabela" icone={List} rotulo="Tabela" onSelect={definir} />
           </div>
@@ -150,7 +150,7 @@ export function FiltrosOrdens({
       </div>
 
       {avancados ? (
-        <div className="grid gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-1.5">
             <Label htmlFor="filtro-cliente">Cliente</Label>
             <Select
@@ -293,7 +293,7 @@ function BotaoVisao({
       title={rotulo}
       className={cn(
         'flex h-7 w-8 items-center justify-center rounded-lg transition-colors',
-        ativo ? 'bg-white/10 text-foreground' : 'text-muted-foreground hover:text-foreground',
+        ativo ? 'bg-[var(--superficie-4)] text-foreground' : 'text-muted-foreground hover:text-foreground',
       )}
     >
       <Icone className="h-4 w-4" />

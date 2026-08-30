@@ -24,7 +24,7 @@ export function AlertsFeed({ alertas }: { alertas: Alerta[] }): React.JSX.Elemen
   return (
     <section
       id="alertas"
-      className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm"
+      className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm"
       aria-labelledby="titulo-alertas"
     >
       <header className="mb-4">
@@ -56,8 +56,8 @@ export function AlertsFeed({ alertas }: { alertas: Alerta[] }): React.JSX.Elemen
                   aria-pressed={filtro === opcao.chave}
                   className={
                     filtro === opcao.chave
-                      ? 'rounded-lg bg-white/10 px-2.5 py-1 text-[11px] font-medium'
-                      : 'rounded-lg px-2.5 py-1 text-[11px] text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground'
+                      ? 'rounded-lg bg-[var(--superficie-4)] px-2.5 py-1 text-[11px] font-medium'
+                      : 'rounded-lg px-2.5 py-1 text-[11px] text-muted-foreground transition-colors hover:bg-[var(--superficie-3)] hover:text-foreground'
                   }
                 >
                   {opcao.rotulo} ({total})

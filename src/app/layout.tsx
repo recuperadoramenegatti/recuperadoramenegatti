@@ -30,7 +30,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>): React.JSX.Element {
   return (
-    <html lang="pt-BR" className="dark" suppressHydrationWarning>
+    // A classe do tema é aplicada pelo script do next-themes antes da
+    // primeira pintura. Fixá-la aqui faria o usuário de modo claro ver um
+    // piscar escuro a cada carregamento de página.
+    <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans`}>
         <Providers>{children}</Providers>
       </body>

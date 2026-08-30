@@ -35,7 +35,7 @@ export function PainelGrupos({ grupos }: { grupos: GrupoIndicadores[] }): React.
       {grupos.map((grupo) => (
         <section
           key={grupo.grupo}
-          className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm"
+          className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm"
         >
           <header className="mb-4">
             <h2 className="text-sm font-semibold tracking-tight">{grupo.grupo}</h2>
@@ -67,7 +67,7 @@ function CartaoIndicador({ indicador }: { indicador: Indicador }): React.JSX.Ele
             'cursor-help rounded-xl border p-3.5 transition-colors duration-200',
             bom === true && 'border-emerald-500/25 bg-emerald-500/[0.05]',
             bom === false && 'border-amber-500/25 bg-amber-500/[0.05]',
-            bom === null && 'border-white/10 bg-white/[0.03]',
+            bom === null && 'border-[var(--borda-1)] bg-[var(--superficie-2)]',
           )}
         >
           <div className="flex items-start justify-between gap-2">

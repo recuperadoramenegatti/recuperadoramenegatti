@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Bar, BarChart, Cell, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import {
+  CURSOR_AREA,
   CaixaTooltip,
   CORES_ESTADO,
   EIXO,
@@ -63,7 +64,7 @@ export function MargemChart({
               width={132}
             />
             <Tooltip
-              cursor={{ fill: 'rgba(255,255,255,0.04)' }}
+              cursor={CURSOR_AREA}
               content={({ active, payload }) => {
                 if (!active || !payload?.length) return null;
                 const item = payload[0]?.payload as MargemPorTipo | undefined;

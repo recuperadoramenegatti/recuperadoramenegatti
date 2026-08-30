@@ -65,7 +65,7 @@ export function OcupacaoChart({
                         </span>
                       </div>
 
-                      <div className="relative h-2 overflow-hidden rounded-full bg-white/[0.07]">
+                      <div className="relative h-2 overflow-hidden rounded-full bg-[var(--superficie-3)]">
                         <div
                           className="h-full rounded-full transition-all duration-500"
                           style={{ width: `${largura}%`, backgroundColor: corDa(centro.ocupacaoPct) }}
@@ -76,7 +76,7 @@ export function OcupacaoChart({
                           style={{
                             left: `${limitar(alvoOcupacao, 0, 100)}%`,
                             backgroundColor: abaixoDoAlvo ? CORES_ESTADO.neutro : '#FFFFFF',
-                            boxShadow: '0 0 0 2px #111827',
+                            boxShadow: '0 0 0 2px var(--superficie-grafico)',
                           }}
                           aria-hidden
                         />

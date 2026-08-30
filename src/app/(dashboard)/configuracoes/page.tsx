@@ -59,7 +59,7 @@ export default function PaginaConfiguracoes({ searchParams }: Props): React.JSX.
 async function ConteudoAba({ aba }: { aba: string }): Promise<React.JSX.Element> {
   if (aba === 'clientes') {
     return (
-      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-8 text-center shadow-card backdrop-blur-sm">
+      <div className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-8 text-center shadow-card backdrop-blur-sm">
         <h3 className="text-sm font-semibold">A carteira de clientes tem tela própria</h3>
         <p className="mx-auto mt-1.5 max-w-md text-sm text-muted-foreground">
           Cadastro, edição e métricas de rentabilidade por cliente ficam em Clientes, com histórico

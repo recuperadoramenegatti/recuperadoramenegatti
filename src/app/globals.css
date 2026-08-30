@@ -26,8 +26,30 @@
     --ring: 38 92% 50%;
     --radius: 0.75rem;
 
-    --surface: 0 0% 100%;
-    --surface-elevated: 220 14% 97%;
+    /*
+     * Superfícies e bordas como tokens.
+     *
+     * O sistema foi desenhado no escuro, onde cada camada é uma sobreposição
+     * branca translúcida. No claro isso desaparece: branco sobre branco não
+     * produz camada nenhuma. Os tokens abaixo invertem a lógica — no claro a
+     * sobreposição é escura — e mantêm a mesma hierarquia visual nos dois
+     * temas sem duplicar classe em componente algum.
+     */
+    --superficie-1: rgba(15, 23, 42, 0.028);
+    --superficie-2: rgba(15, 23, 42, 0.022);
+    --superficie-3: rgba(15, 23, 42, 0.055);
+    --superficie-4: rgba(15, 23, 42, 0.085);
+    --superficie-elevada: #ffffff;
+    --superficie-cartao: #ffffff;
+    --superficie-grafico: #ffffff;
+    --fundo-sidebar: rgba(255, 255, 255, 0.82);
+
+    --borda-0: rgba(15, 23, 42, 0.07);
+    --borda-1: rgba(15, 23, 42, 0.11);
+    --borda-2: rgba(15, 23, 42, 0.2);
+
+    --sombra-cartao: 0 1px 2px rgba(15, 23, 42, 0.05), 0 8px 24px rgba(15, 23, 42, 0.06);
+    --sombra-cartao-hover: 0 2px 4px rgba(15, 23, 42, 0.07), 0 14px 36px rgba(15, 23, 42, 0.1);
   }
 
   .dark {
@@ -52,8 +74,21 @@
     --input: 217 25% 21%;
     --ring: 38 92% 50%;
 
-    --surface: 221 39% 11%;
-    --surface-elevated: 218 33% 15%;
+    --superficie-1: rgba(255, 255, 255, 0.04);
+    --superficie-2: rgba(255, 255, 255, 0.03);
+    --superficie-3: rgba(255, 255, 255, 0.07);
+    --superficie-4: rgba(255, 255, 255, 0.1);
+    --superficie-elevada: #161f33;
+    --superficie-cartao: #141c2e;
+    --superficie-grafico: #111827;
+    --fundo-sidebar: rgba(13, 20, 36, 0.8);
+
+    --borda-0: rgba(255, 255, 255, 0.07);
+    --borda-1: rgba(255, 255, 255, 0.1);
+    --borda-2: rgba(255, 255, 255, 0.2);
+
+    --sombra-cartao: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --sombra-cartao-hover: 0 12px 40px rgba(0, 0, 0, 0.55);
   }
 }
 
@@ -75,7 +110,7 @@
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
-  /* Fundo com brilho ambiente sutil no dark mode */
+  /* Fundo com brilho ambiente sutil no modo escuro */
   .dark body {
     background-image:
       radial-gradient(900px circle at 12% -8%, rgba(245, 158, 11, 0.07), transparent 55%),
@@ -91,10 +126,11 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-white/10;
+    border-radius: 9999px;
+    background-color: var(--superficie-4);
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-white/20;
+    background-color: var(--borda-2);
   }
 
   /* Remove as setinhas dos inputs numéricos */
@@ -115,16 +151,16 @@
 @layer components {
   /* Glassmorphism padrão dos cards principais */
   .glass {
-    @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm;
-  }
-
-  .dark .glass {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    @apply rounded-2xl backdrop-blur-sm;
+    border: 1px solid var(--borda-1);
+    background-color: var(--superficie-3);
+    box-shadow: var(--sombra-cartao);
   }
 
   .glass-elevated {
-    @apply rounded-2xl border border-white/10 backdrop-blur-md;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
+    @apply rounded-2xl backdrop-blur-md;
+    border: 1px solid var(--borda-1);
+    background: linear-gradient(180deg, var(--superficie-3), var(--superficie-2));
   }
 
   .label-caps {
@@ -157,7 +193,10 @@
   }
 
   .linha-hover {
-    @apply transition-colors duration-200 hover:bg-white/[0.04];
+    @apply transition-colors duration-200;
+  }
+  .linha-hover:hover {
+    background-color: var(--superficie-1);
   }
 
   .card-interativo {
@@ -165,7 +204,8 @@
   }
 
   .skeleton {
-    @apply relative overflow-hidden rounded-md bg-white/[0.06];
+    @apply relative overflow-hidden rounded-md;
+    background-color: var(--superficie-3);
   }
   .skeleton::after {
     content: '';

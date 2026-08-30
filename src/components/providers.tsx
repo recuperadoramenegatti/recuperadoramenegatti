@@ -23,8 +23,9 @@ export function Providers({ children }: { children: React.ReactNode }): React.JS
             closeButton
             toastOptions={{
               style: {
-                background: 'rgba(26, 35, 50, 0.95)',
-                border: '1px solid rgba(255,255,255,0.1)',
+                background: 'hsl(var(--popover))',
+                border: '1px solid var(--borda-1)',
+                color: 'hsl(var(--popover-foreground))',
                 backdropFilter: 'blur(12px)',
               },
             }}

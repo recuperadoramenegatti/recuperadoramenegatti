@@ -130,7 +130,7 @@ function PainelNCG({
   const { ncg } = fluxo;
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+    <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
       <header className="mb-4">
         <h2 className="text-sm font-semibold tracking-tight">Necessidade de capital de giro</h2>
         <p className="mt-0.5 text-xs text-muted-foreground">
@@ -155,7 +155,7 @@ function PainelNCG({
       </div>
 
       {ncg.ncg > 0 ? (
-        <p className="mt-4 border-t border-white/10 pt-3 text-xs leading-relaxed text-muted-foreground">
+        <p className="mt-4 border-t border-[var(--borda-1)] pt-3 text-xs leading-relaxed text-muted-foreground">
           Com um ciclo de {ncg.cicloFinanceiro} dias, {formatarMoeda(ncg.ncg)} ficam
           permanentemente imobilizados financiando o giro. Reduzir o PMR em 5 dias liberaria
           aproximadamente {formatarMoeda(5 * ncg.faturamentoDiarioMedio)} de caixa. Os prazos são
@@ -184,7 +184,7 @@ function ItemNCG({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div className="cursor-help rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
+        <div className="cursor-help rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-3.5">
           <span className="label-caps">{rotulo}</span>
           <p
             className={`mt-1 text-lg font-semibold tabular-nums ${destaque ? 'text-amber-400' : ''}`}
@@ -204,7 +204,7 @@ function TabelaDias({ fluxo }: { fluxo: ResultadoFluxoCaixa }): React.JSX.Elemen
   if (comMovimento.length === 0) return <></>;
 
   return (
-    <section className="overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.04] shadow-card backdrop-blur-sm">
+    <section className="overflow-x-auto rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] shadow-card backdrop-blur-sm">
       <header className="px-5 py-4">
         <h2 className="text-sm font-semibold tracking-tight">Dias com movimentação</h2>
         <p className="mt-0.5 text-xs text-muted-foreground">
@@ -214,7 +214,7 @@ function TabelaDias({ fluxo }: { fluxo: ResultadoFluxoCaixa }): React.JSX.Elemen
 
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-white/10">
+          <tr className="border-b border-[var(--borda-1)]">
             <th className="px-5 py-2.5 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Dia
             </th>
@@ -236,7 +236,7 @@ function TabelaDias({ fluxo }: { fluxo: ResultadoFluxoCaixa }): React.JSX.Elemen
           {comMovimento.map((dia) => (
             <tr
               key={dia.dia}
-              className={`border-b border-white/[0.05] transition-colors hover:bg-white/[0.03] ${
+              className={`border-b border-[var(--borda-0)] transition-colors hover:bg-[var(--superficie-2)] ${
                 dia.negativo ? 'bg-red-500/[0.05]' : ''
               }`}
             >
@@ -291,7 +291,7 @@ function CardFluxo({
   };
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+    <div className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
       <div className="flex items-start justify-between gap-2">
         <span className="label-caps">{rotulo}</span>
         <Icone className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />

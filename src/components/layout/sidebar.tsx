@@ -48,12 +48,12 @@ export function Sidebar({ logo }: SidebarProps): React.JSX.Element {
   return (
     <aside
       className={cn(
-        'sticky top-0 z-30 flex h-screen shrink-0 flex-col border-r border-white/[0.07] bg-[#0d1424]/80 backdrop-blur-xl transition-[width] duration-300',
+        'sticky top-0 z-30 flex h-screen shrink-0 flex-col border-r border-[var(--borda-0)] bg-[var(--fundo-sidebar)] backdrop-blur-xl transition-[width] duration-300',
         colapsada ? 'w-[76px]' : 'w-[264px]',
       )}
       aria-label="Navegação principal"
     >
-      <div className="flex h-16 items-center justify-between gap-2 border-b border-white/[0.07] px-4">
+      <div className="flex h-16 items-center justify-between gap-2 border-b border-[var(--borda-0)] px-4">
         {colapsada ? (
           <Logo tamanho={34} src={logo} className="mx-auto" />
         ) : (
@@ -69,7 +69,7 @@ export function Sidebar({ logo }: SidebarProps): React.JSX.Element {
                 {grupo.titulo}
               </div>
             ) : (
-              <div className="mx-auto mb-2 h-px w-6 bg-white/10" aria-hidden />
+              <div className="mx-auto mb-2 h-px w-6 bg-[var(--superficie-4)]" aria-hidden />
             )}
 
             <ul className="space-y-1">
@@ -84,8 +84,8 @@ export function Sidebar({ logo }: SidebarProps): React.JSX.Element {
                       'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200',
                       colapsada && 'justify-center px-0',
                       ativo
-                        ? 'bg-white/[0.07] text-foreground'
-                        : 'text-muted-foreground hover:bg-white/[0.04] hover:text-foreground',
+                        ? 'bg-[var(--superficie-3)] text-foreground'
+                        : 'text-muted-foreground hover:bg-[var(--superficie-1)] hover:text-foreground',
                     )}
                     aria-current={ativo ? 'page' : undefined}
                   >
@@ -129,12 +129,12 @@ export function Sidebar({ logo }: SidebarProps): React.JSX.Element {
         ))}
       </nav>
 
-      <div className="border-t border-white/[0.07] p-3">
+      <div className="border-t border-[var(--borda-0)] p-3">
         <button
           type="button"
           onClick={alternar}
           className={cn(
-            'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-white/[0.04] hover:text-foreground',
+            'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-[var(--superficie-1)] hover:text-foreground',
             colapsada && 'justify-center px-0',
           )}
           aria-label={colapsada ? 'Expandir menu lateral' : 'Recolher menu lateral'}

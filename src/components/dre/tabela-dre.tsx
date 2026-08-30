@@ -33,10 +33,10 @@ export function TabelaDRE({
   const comComparativo = Boolean(anterior);
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.04] shadow-card backdrop-blur-sm">
+    <div className="overflow-x-auto rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] shadow-card backdrop-blur-sm">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-white/10">
+          <tr className="border-b border-[var(--borda-1)]">
             <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Conta
             </th>
@@ -78,7 +78,7 @@ export function TabelaDRE({
         </tbody>
       </table>
 
-      <footer className="border-t border-white/10 px-5 py-3">
+      <footer className="border-t border-[var(--borda-1)] px-5 py-3">
         <p className="text-[11px] leading-relaxed text-muted-foreground">
           A capacidade ociosa é a parcela da folha produtiva que nenhuma OS absorveu no período —
           aparece em linha própria para que o custo de ficar parado não desapareça dentro da
@@ -114,8 +114,8 @@ function LinhaTabela({
   return (
     <tr
       className={cn(
-        'border-b border-white/[0.05] transition-colors hover:bg-white/[0.03]',
-        ehSubtotal && 'bg-white/[0.03]',
+        'border-b border-[var(--borda-0)] transition-colors hover:bg-[var(--superficie-2)]',
+        ehSubtotal && 'bg-[var(--superficie-2)]',
         linha.destaque && 'font-semibold',
       )}
     >

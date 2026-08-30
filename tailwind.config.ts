@@ -72,8 +72,9 @@ const config: Config = {
         'gradient-azul': 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
       },
       boxShadow: {
-        card: '0 8px 32px rgba(0,0,0,0.4)',
-        'card-hover': '0 12px 40px rgba(0,0,0,0.55)',
+        // Segue o tema: no claro a sombra é suave, no escuro é profunda.
+        card: 'var(--sombra-cartao)',
+        'card-hover': 'var(--sombra-cartao-hover, var(--sombra-cartao))',
         glow: '0 0 0 1px rgba(245,158,11,0.25), 0 8px 32px rgba(245,158,11,0.15)',
       },
       borderRadius: {

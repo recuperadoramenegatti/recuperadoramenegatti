@@ -102,7 +102,7 @@ export function IndicadorMargem({
         {formatarPercentual(margem)}
       </span>
       {comBarra ? (
-        <div className="mt-1 h-1 overflow-hidden rounded-full bg-white/10">
+        <div className="mt-1 h-1 overflow-hidden rounded-full bg-[var(--superficie-4)]">
           <div
             className={cn('h-full rounded-full transition-all duration-500', BARRA_MARGEM[classificacao])}
             style={{ width: `${largura}%` }}

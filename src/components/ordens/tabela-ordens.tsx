@@ -117,7 +117,7 @@ export function TabelaOrdens({
   );
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-2 py-2 shadow-card backdrop-blur-sm">
+    <div className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] px-2 py-2 shadow-card backdrop-blur-sm">
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
@@ -185,7 +185,7 @@ export function TabelaOrdens({
               <TableCell>
                 <Link
                   href={`/ordens/${os.id}`}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/10 hover:text-foreground"
+                  className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-[var(--superficie-4)] hover:text-foreground"
                   aria-label={`Abrir OS ${os.numero}`}
                 >
                   <ChevronRight className="h-4 w-4" />

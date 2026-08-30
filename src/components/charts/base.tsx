@@ -37,18 +37,27 @@ export const CORES_ESTADO = {
   neutro: '#6B7280',
 } as const;
 
+/**
+ * Eixos, grade e anéis leem variáveis CSS em vez de cores fixas, para que o
+ * gráfico acompanhe o tema. O Recharts aceita `var(--x)` em `stroke` e `fill`
+ * porque escreve esses valores direto no SVG.
+ */
 export const EIXO = {
-  stroke: 'rgba(255,255,255,0.08)',
-  tick: { fill: '#9CA3AF', fontSize: 11 },
+  stroke: 'var(--borda-1)',
+  tick: { fill: 'hsl(var(--muted-foreground))', fontSize: 11 },
 } as const;
 
 export const GRADE = {
-  stroke: 'rgba(255,255,255,0.06)',
+  stroke: 'var(--borda-0)',
   strokeDasharray: '3 3',
 } as const;
 
 /** Cor da superfície — usada nos anéis de 2px que separam marcas sobrepostas. */
-export const SUPERFICIE = '#111827';
+export const SUPERFICIE = 'var(--superficie-grafico)';
+
+/** Realce do cursor sob o ponteiro. */
+export const CURSOR_LINHA = { stroke: 'var(--borda-2)', strokeWidth: 1 } as const;
+export const CURSOR_AREA = { fill: 'var(--superficie-1)' } as const;
 
 export type Formatador = (valor: number) => string;
 
@@ -79,7 +88,7 @@ export function MolduraGrafico({
   return (
     <section
       className={cn(
-        'rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm',
+        'rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm',
         className,
       )}
     >
@@ -118,7 +127,7 @@ export function CaixaTooltip({
   rodape?: string;
 }): React.JSX.Element {
   return (
-    <div className="rounded-xl border border-white/12 bg-popover/95 px-3 py-2 shadow-card backdrop-blur-xl">
+    <div className="rounded-xl border border-[var(--borda-1)] bg-popover/95 px-3 py-2 shadow-card backdrop-blur-xl">
       <p className="text-xs font-medium">{titulo}</p>
       <ul className="mt-1.5 space-y-1">
         {itens.map((item) => (
@@ -138,7 +147,7 @@ export function CaixaTooltip({
         ))}
       </ul>
       {rodape ? (
-        <p className="mt-1.5 border-t border-white/10 pt-1.5 text-[11px] text-muted-foreground">
+        <p className="mt-1.5 border-t border-[var(--borda-1)] pt-1.5 text-[11px] text-muted-foreground">
           {rodape}
         </p>
       ) : null}
@@ -183,7 +192,7 @@ export function Legenda({
 /** Estado vazio dentro da área de um gráfico. */
 export function GraficoVazio({ mensagem }: { mensagem: string }): React.JSX.Element {
   return (
-    <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-white/10">
+    <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-[var(--borda-1)]">
       <p className="max-w-xs px-6 text-center text-sm text-muted-foreground">{mensagem}</p>
     </div>
   );

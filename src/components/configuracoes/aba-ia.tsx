@@ -157,7 +157,7 @@ export function AbaIA({
             </Select>
           </div>
 
-          <label className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-3">
+          <label className="flex items-center justify-between gap-4 rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] px-3.5 py-3">
             <span className="text-sm">
               Gerar análise automaticamente
               <span className="mt-0.5 block text-xs text-muted-foreground">
@@ -208,18 +208,18 @@ export function AbaIA({
         </div>
       </section>
 
-      <section className="h-fit rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+      <section className="h-fit rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
         <h3 className="text-sm font-semibold tracking-tight">Histórico de uso</h3>
         <p className="mt-0.5 text-xs text-muted-foreground">
           Consumo acumulado desde a instalação.
         </p>
 
         <dl className="mt-4 grid grid-cols-2 gap-3">
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
+          <div className="rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-3.5">
             <dt className="label-caps">Análises geradas</dt>
             <dd className="mt-1 text-xl font-semibold tabular-nums">{uso.totalGeracoes}</dd>
           </div>
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
+          <div className="rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-3.5">
             <dt className="label-caps">Tokens consumidos</dt>
             <dd className="mt-1 text-xl font-semibold tabular-nums">
               {formatarNumero(uso.totalTokens, 0)}
@@ -236,7 +236,7 @@ export function AbaIA({
         )}
 
         {uso.porModelo.length > 0 ? (
-          <div className="mt-4 space-y-2 border-t border-white/10 pt-4">
+          <div className="mt-4 space-y-2 border-t border-[var(--borda-1)] pt-4">
             <p className="label-caps">Por modelo</p>
             {uso.porModelo.map((item) => (
               <div key={item.modelo} className="flex items-baseline justify-between gap-3 text-sm">

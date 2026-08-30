@@ -145,7 +145,7 @@ export default function PaginaRelatorios({ searchParams }: Props): React.JSX.Ele
         ))}
       </div>
 
-      <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+      <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
         <h2 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
           <Building2 className="h-4 w-4 text-primary" aria-hidden />
           Sobre estes arquivos
@@ -193,7 +193,7 @@ function CartaoRelatorio({
 
   return (
     <article
-      className={`flex flex-col rounded-2xl border bg-white/[0.04] p-5 shadow-card backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover ${bordas[relatorio.tom]}`}
+      className={`flex flex-col rounded-2xl border bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover ${bordas[relatorio.tom]}`}
     >
       <Icone className={`h-5 w-5 ${cores[relatorio.tom]}`} aria-hidden />
 

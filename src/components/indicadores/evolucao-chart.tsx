@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts';
 import {
+  CURSOR_LINHA,
   CaixaTooltip,
   CORES_SERIE,
   EIXO,
@@ -77,7 +78,7 @@ export function EvolucaoChart({
       descricao="Série histórica com linha de tendência"
       altura={300}
       acessorio={
-        <div className="flex flex-wrap gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1">
+        <div className="flex flex-wrap gap-1 rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-1">
           {METRICAS.map((opcao) => (
             <button
               key={opcao.chave}
@@ -87,7 +88,7 @@ export function EvolucaoChart({
               className={cn(
                 'rounded-lg px-2.5 py-1 text-[11px] transition-colors',
                 metrica === opcao.chave
-                  ? 'bg-white/10 text-foreground'
+                  ? 'bg-[var(--superficie-4)] text-foreground'
                   : 'text-muted-foreground hover:text-foreground',
               )}
             >
@@ -118,7 +119,7 @@ export function EvolucaoChart({
               width={68}
             />
             <Tooltip
-              cursor={{ stroke: 'rgba(255,255,255,0.18)', strokeWidth: 1 }}
+              cursor={CURSOR_LINHA}
               content={({ active, payload, label }) => {
                 if (!active || !payload?.length) return null;
                 const ponto = payload[0]?.payload as { valor: number; tendencia: number } | undefined;
@@ -136,7 +137,7 @@ export function EvolucaoChart({
                       {
                         nome: 'Tendência',
                         valor: ponto.tendencia,
-                        cor: 'rgba(255,255,255,0.3)',
+                        cor: 'var(--borda-2)',
                         formatador: configuracao.formatador,
                       },
                     ]}
@@ -148,7 +149,7 @@ export function EvolucaoChart({
             <Line
               type="monotone"
               dataKey="tendencia"
-              stroke="rgba(255,255,255,0.22)"
+              stroke="var(--borda-2)"
               strokeWidth={2}
               strokeDasharray="4 4"
               dot={false}

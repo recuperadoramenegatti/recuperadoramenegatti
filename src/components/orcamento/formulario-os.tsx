@@ -284,7 +284,7 @@ export function FormularioOS({
                     'rounded-xl border px-3 py-2.5 text-xs font-medium transition-all duration-200',
                     estado.tipo === tipo
                       ? 'border-primary/50 bg-primary/15 text-primary'
-                      : 'border-white/10 bg-white/[0.03] text-muted-foreground hover:border-white/20 hover:text-foreground',
+                      : 'border-[var(--borda-1)] bg-[var(--superficie-2)] text-muted-foreground hover:border-[var(--borda-2)] hover:text-foreground',
                   )}
                   aria-pressed={estado.tipo === tipo}
                 >
@@ -588,7 +588,7 @@ export function FormularioOS({
           </div>
 
           {/* Preço fechado manualmente */}
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+          <div className="rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-3">
             <label className="flex cursor-pointer items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -597,7 +597,7 @@ export function FormularioOS({
                   setPrecoManual(e.target.checked);
                   definir('precoFinal', e.target.checked ? resultado.precoSugerido : null);
                 }}
-                className="h-4 w-4 rounded border-white/20 bg-transparent accent-amber-500"
+                className="h-4 w-4 rounded border-[var(--borda-2)] bg-transparent accent-amber-500"
               />
               <span>Definir preço final manualmente</span>
             </label>
@@ -684,7 +684,7 @@ export function FormularioOS({
           garante que o último bloco do formulário role até ficar visível em
           vez de terminar escondido atrás dela.
         */}
-        <div className="sticky bottom-4 z-10 flex flex-wrap gap-2 rounded-2xl border border-white/15 bg-[#161f33] p-3 shadow-[0_-4px_24px_rgba(0,0,0,0.5)]">
+        <div className="sticky bottom-4 z-10 flex flex-wrap gap-2 rounded-2xl border border-[var(--borda-2)] bg-[var(--superficie-elevada)] p-3 shadow-[0_-4px_24px_rgba(0,0,0,0.5)]">
           <Button onClick={() => void salvar('orcado')} carregando={salvando} className="flex-1 sm:flex-none">
             <Save className="h-4 w-4" />
             {osId ? 'Salvar alterações' : 'Salvar orçamento'}
@@ -756,10 +756,10 @@ function Bloco({
   children: React.ReactNode;
 }): React.JSX.Element {
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+    <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold">
-          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/[0.07] text-xs font-bold text-muted-foreground">
+          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[var(--superficie-3)] text-xs font-bold text-muted-foreground">
             {numero}
           </span>
           {Icone ? <Icone className="h-4 w-4 text-primary" aria-hidden /> : null}

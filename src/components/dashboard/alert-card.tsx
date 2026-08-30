@@ -46,8 +46,8 @@ const ESTILO: Record<
   baixo: {
     icone: Lightbulb,
     cor: 'text-muted-foreground',
-    borda: 'border-white/10',
-    fundo: 'bg-white/[0.03]',
+    borda: 'border-[var(--borda-1)]',
+    fundo: 'bg-[var(--superficie-2)]',
     rotulo: 'Baixa',
     badge: 'secondary',
   },
@@ -97,7 +97,7 @@ export function AlertCard({ alerta }: { alerta: Alerta }): React.JSX.Element {
           </p>
 
           {expandido ? (
-            <div className="mt-2.5 rounded-lg border border-white/10 bg-black/20 p-2.5">
+            <div className="mt-2.5 rounded-lg border border-[var(--borda-1)] bg-black/20 p-2.5">
               <span className="label-caps text-[10px]">O que fazer</span>
               <p className="mt-1 text-xs leading-relaxed">{alerta.acaoSugerida}</p>
             </div>

@@ -36,8 +36,8 @@ const ESTILO = {
   sem_referencia: {
     icone: AlertTriangle,
     cor: 'text-muted-foreground',
-    fundo: 'bg-white/5',
-    borda: 'border-white/10',
+    fundo: 'bg-[var(--superficie-3)]',
+    borda: 'border-[var(--borda-1)]',
     rotulo: 'Sem referência de preço',
   },
 } as const;
@@ -78,7 +78,7 @@ export function ComparativoPecaNova({ comparativo, className }: Props): React.JS
         </div>
 
         <div className="pt-1">
-          <div className="relative h-2 overflow-hidden rounded-full bg-white/10">
+          <div className="relative h-2 overflow-hidden rounded-full bg-[var(--superficie-4)]">
             <div
               className={cn(
                 'h-full rounded-full transition-all duration-500',
@@ -97,7 +97,7 @@ export function ComparativoPecaNova({ comparativo, className }: Props): React.JS
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-2.5">
+        <div className="flex items-center justify-between gap-3 border-t border-[var(--borda-1)] pt-2.5">
           <span className="flex items-center gap-1.5 text-muted-foreground">
             <ArrowRight className="h-3.5 w-3.5" aria-hidden />
             Economia para o cliente

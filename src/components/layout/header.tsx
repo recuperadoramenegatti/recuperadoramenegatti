@@ -83,7 +83,7 @@ export function Header({
   };
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b border-white/[0.07] bg-background/70 px-6 backdrop-blur-xl">
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b border-[var(--borda-0)] bg-background/70 px-6 backdrop-blur-xl">
       <nav aria-label="Trilha de navegação" className="flex min-w-0 items-center gap-1.5 text-sm">
         {migalhas.map((migalha, indice) => (
           <React.Fragment key={migalha.href}>
@@ -121,7 +121,7 @@ export function Header({
           <TooltipTrigger asChild>
             <Link
               href="/dashboard#alertas"
-              className="relative flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+              className="relative flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-[var(--superficie-3)] hover:text-foreground"
               aria-label={`${totalAlertas} alertas ativos`}
             >
               <Bell className="h-[18px] w-[18px]" aria-hidden />
@@ -149,7 +149,7 @@ export function Header({
               <button
                 type="button"
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-[var(--superficie-3)] hover:text-foreground"
                 aria-label={theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'}
               >
                 {theme === 'dark' ? (
@@ -170,7 +170,7 @@ export function Header({
             <button
               type="button"
               className={cn(
-                'flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] py-1.5 pl-1.5 pr-3 transition-colors hover:bg-white/[0.07]',
+                'flex items-center gap-2 rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] py-1.5 pl-1.5 pr-3 transition-colors hover:bg-[var(--superficie-3)]',
               )}
               aria-label="Menu do usuário"
             >

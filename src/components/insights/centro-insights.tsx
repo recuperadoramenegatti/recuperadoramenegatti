@@ -104,7 +104,7 @@ export function CentroInsights({
       {/* ── Cabeçalho ─────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1">
+          <div className="flex items-center gap-1 rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] p-1">
             <Button
               variant="ghost"
               size="icon-sm"
@@ -193,7 +193,7 @@ export function CentroInsights({
       )}
 
       {/* ── Diagnóstico determinístico ────────────────────────────── */}
-      <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+      <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
         <header className="mb-4">
           <h2 className="text-sm font-semibold tracking-tight">Diagnóstico automático</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
@@ -307,7 +307,7 @@ function AnaliseCompleta({ insight }: { insight: InsightCarregado }): React.JSX.
 
       {/* Projeção */}
       {analise.projecao ? (
-        <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card backdrop-blur-sm">
+        <section className="rounded-2xl border border-[var(--borda-1)] bg-[var(--superficie-1)] p-5 shadow-card backdrop-blur-sm">
           <h2 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
             <TrendingUp className="h-4 w-4 text-primary" aria-hidden />
             Projeção para os próximos 60 a 90 dias
@@ -318,7 +318,7 @@ function AnaliseCompleta({ insight }: { insight: InsightCarregado }): React.JSX.
 
       {/* Frase do mês */}
       {analise.frase_do_mes ? (
-        <section className="relative overflow-hidden rounded-2xl border border-white/10 px-8 py-10 text-center shadow-card">
+        <section className="relative overflow-hidden rounded-2xl border border-[var(--borda-1)] px-8 py-10 text-center shadow-card">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0 bg-gradient-hero opacity-[0.09]"
@@ -357,7 +357,7 @@ function Coluna({
       {temItens ? (
         <div className="space-y-2.5">{children}</div>
       ) : (
-        <p className="rounded-xl border border-dashed border-white/10 px-4 py-6 text-center text-sm text-muted-foreground">
+        <p className="rounded-xl border border-dashed border-[var(--borda-1)] px-4 py-6 text-center text-sm text-muted-foreground">
           {vazio}
         </p>
       )}

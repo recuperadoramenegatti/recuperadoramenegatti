@@ -148,9 +148,9 @@ export function Kanban({
           <div
             key={status}
             className={cn(
-              'flex w-[300px] shrink-0 flex-col rounded-2xl border border-t-2 border-white/10 bg-white/[0.03] transition-colors',
+              'flex w-[300px] shrink-0 flex-col rounded-2xl border border-t-2 border-[var(--borda-1)] bg-[var(--superficie-2)] transition-colors',
               COR_COLUNA[status],
-              colunaAlvo === status && 'border-white/25 bg-white/[0.07]',
+              colunaAlvo === status && 'border-[var(--borda-2)] bg-[var(--superficie-3)]',
             )}
             onDragOver={(evento) => {
               evento.preventDefault();
@@ -164,12 +164,12 @@ export function Kanban({
               if (id) void mover(id, status);
             }}
           >
-            <header className="border-b border-white/[0.07] px-3.5 py-3">
+            <header className="border-b border-[var(--borda-0)] px-3.5 py-3">
               <div className="flex items-center justify-between gap-2">
                 <h3 className="text-xs font-semibold uppercase tracking-wider">
                   {LABEL_STATUS_OS[status]}
                 </h3>
-                <span className="rounded-md bg-white/[0.07] px-1.5 py-0.5 text-[11px] tabular-nums text-muted-foreground">
+                <span className="rounded-md bg-[var(--superficie-3)] px-1.5 py-0.5 text-[11px] tabular-nums text-muted-foreground">
                   {daColuna.length}
                 </span>
               </div>
@@ -197,8 +197,8 @@ export function Kanban({
                     }}
                     onDragEnd={() => setArrastando(null)}
                     className={cn(
-                      'group rounded-xl border border-white/10 bg-[#141c2e] p-3 transition-all duration-200',
-                      'hover:border-white/20 hover:shadow-card',
+                      'group rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-cartao)] p-3 transition-all duration-200',
+                      'hover:border-[var(--borda-2)] hover:shadow-card',
                       arrastando === os.id && 'opacity-40',
                       movendo === os.id && 'pointer-events-none',
                     )}
@@ -299,7 +299,7 @@ function MenuCartao({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-white/10 hover:text-foreground"
+          className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-[var(--superficie-4)] hover:text-foreground"
           aria-label={`Ações da OS ${os.numero}`}
         >
           <MoreVertical className="h-3.5 w-3.5" aria-hidden />

@@ -23,13 +23,13 @@ export function SeletorPeriodoRelatorio({ periodo }: { periodo: string }): React
   const ehMesCorrente = periodo === periodoAtual();
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[var(--borda-1)] bg-[var(--superficie-2)] px-4 py-3">
       <span className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
         <CalendarRange className="h-4 w-4" aria-hidden />
         Período de referência
       </span>
 
-      <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/[0.03] p-1">
+      <div className="flex items-center gap-1 rounded-lg border border-[var(--borda-1)] bg-[var(--superficie-2)] p-1">
         <Button
           variant="ghost"
           size="icon-sm"
