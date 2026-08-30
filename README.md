@@ -269,13 +269,17 @@ download fora desta máquina** — pen drive, e-mail, nuvem.
 
 ### Backups automáticos
 
-| Tipo            | Quando                                    | Quantos guarda |
-| --------------- | ----------------------------------------- | -------------- |
-| Incremental     | A cada OS salva, no máximo um por hora    | 30             |
-| Semanal         | Todo domingo, no primeiro acesso do dia   | 12             |
+| Tipo            | Quando                                       | Quantos guarda |
+| --------------- | -------------------------------------------- | -------------- |
+| Incremental     | A cada OS salva, no máximo um por hora       | 30             |
+| Semanal         | No primeiro acesso depois de completada a semana | 12         |
 
 Ficam em `backups/`, na pasta do projeto. Nunca impedem você de trabalhar: se
 um backup falhar, o erro é registrado e a OS é salva do mesmo jeito.
+
+> A regra do semanal é "faz sete dias desde o último", não "é domingo". A
+> oficina trabalha de segunda a sábado — uma regra amarrada ao domingo nunca
+> dispararia, porque ninguém abre o sistema no dia em que ela está fechada.
 
 > Os automáticos protegem contra exclusão acidental e erro de operação, mas
 > ficam **no mesmo computador que o banco**. Contra perda da máquina, só o
@@ -329,6 +333,26 @@ nuvem), que é o risco real aqui.
 
 Alternativamente, defina `ANTHROPIC_API_KEY` no `.env`. A chave cadastrada na
 interface tem precedência.
+
+### Geração automática
+
+Com a chave configurada e o interruptor ligado, o parecer do mês anterior é
+gerado sozinho a partir do dia 3 — sobre o mês **fechado**, não o corrente:
+uma análise emitida no dia 2 olharia dois dias de faturamento e concluiria que
+a empresa quebrou. Se o mês não teve nenhuma OS, nada é gerado; não vale
+gastar tokens para a IA dizer que não há dados.
+
+O disparo é o próprio uso do sistema. Não há cron nem serviço de fundo: toda
+tela autenticada verifica, no máximo uma vez por hora, se há backup semanal ou
+parecer pendente. A verificação nunca bloqueia a tela nem derruba a página se
+falhar.
+
+### O plano deu resultado?
+
+Quando você marca ações como concluídas num mês, a tela de insights do mês
+seguinte mostra a comparação: faturamento, margem, EBITDA, ocupação e OS
+abaixo do mínimo, antes e depois. Ela mostra o que mudou, não o que causou a
+mudança — um mês melhor pode vir de um cliente novo, e o texto diz isso.
 
 ### Alertas sem IA
 
@@ -389,6 +413,8 @@ backups/                  backups locais (fora do controle de versão)
 | `npm run verificar`    | Confere o motor de cálculo                      |
 | `npm run smoke`        | Teste de ponta a ponta contra o banco           |
 | `npm run smoke:backup` | Testa o ciclo completo de backup                |
+| `npm run smoke:tarefas`| Testa as tarefas automáticas                    |
+| `npm run verificar:eixos` | Confere que nenhum rótulo de gráfico é cortado |
 | `npm run typecheck`    | Verificação de tipos                            |
 | `npm run lint`         | Análise estática                                |
 
@@ -399,10 +425,22 @@ backups/                  backups locais (fora do controle de versão)
 O sistema vem com três suítes que rodam contra dados reais, não contra mocks.
 
 ```bash
-npm run verificar     # 58 conferências do motor de cálculo
-npm run smoke         # cria cliente e OS no banco, confere e limpa
-npm run smoke:backup  # exporta, adultera, valida, apaga, restaura
+npm run verificar      # 58 conferências do motor de cálculo
+npm run smoke          # cria cliente e OS no banco, confere e limpa
+npm run smoke:backup   # exporta, adultera, valida, apaga, restaura
+npm run smoke:tarefas  # backup semanal e parecer automático
 ```
+
+Com o sistema rodando, há ainda uma verificação visual:
+
+```bash
+npm run verificar:eixos -- http://localhost:3000
+```
+
+Ela existe por causa de um defeito real: a faixa do eixo Y era estreita demais
+e cortava o primeiro caractere do rótulo. Em valores negativos esse caractere
+é o sinal de menos — um déficit de R$ 395,9 mil aparecia no gráfico como
+superávit. O teste falha se qualquer rótulo voltar a transbordar.
 
 `npm run verificar` confere que as taxas derivadas reproduzem exatamente os
 números calibrados no diagnóstico financeiro — THH R$ 153,59, CFR R$ 24,45 e o

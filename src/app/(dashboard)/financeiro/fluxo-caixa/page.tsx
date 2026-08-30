@@ -62,16 +62,20 @@ async function ConteudoFluxo({
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <CardFluxo
           icone={ArrowUpCircle}
-          rotulo="Entradas previstas"
+          rotulo="Entradas do mês"
           valor={fluxo.totalEntradas}
-          detalhe={`${formatarMoeda(fluxo.entradasRealizadas)} já recebidos`}
+          detalhe={
+            fluxo.entradasPrevistas > 0
+              ? `${formatarMoeda(fluxo.entradasRealizadas)} recebidos · ${formatarMoeda(fluxo.entradasPrevistas)} a receber`
+              : `${formatarMoeda(fluxo.entradasRealizadas)} já recebidos`
+          }
           tom="verde"
         />
         <CardFluxo
           icone={ArrowDownCircle}
-          rotulo="Saídas previstas"
+          rotulo="Saídas do mês"
           valor={fluxo.totalSaidas}
-          detalhe="folha, fixos e insumos"
+          detalhe="folha, custos fixos e insumos"
           tom="vermelho"
         />
         <CardFluxo
@@ -224,6 +228,9 @@ function TabelaDias({ fluxo }: { fluxo: ResultadoFluxoCaixa }): React.JSX.Elemen
             <th className="px-4 py-2.5 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Saídas
             </th>
+            <th className="px-4 py-2.5 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Situação
+            </th>
             <th className="px-4 py-2.5 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Saldo do dia
             </th>
@@ -246,6 +253,17 @@ function TabelaDias({ fluxo }: { fluxo: ResultadoFluxoCaixa }): React.JSX.Elemen
               </td>
               <td className="px-4 py-2.5 text-right tabular-nums text-red-400">
                 {dia.saidas > 0 ? formatarMoeda(dia.saidas) : '—'}
+              </td>
+              <td className="px-4 py-2.5 text-center">
+                {dia.entradasRealizadas > 0 || dia.saidasRealizadas > 0 ? (
+                  <span className="rounded-md bg-emerald-500/15 px-2 py-0.5 text-[11px] text-emerald-400">
+                    realizado
+                  </span>
+                ) : (
+                  <span className="rounded-md bg-[var(--superficie-3)] px-2 py-0.5 text-[11px] text-muted-foreground">
+                    previsto
+                  </span>
+                )}
               </td>
               <td
                 className={`px-4 py-2.5 text-right tabular-nums ${

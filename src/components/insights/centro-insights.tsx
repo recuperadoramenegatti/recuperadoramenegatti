@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { InsightCard } from '@/components/insights/insight-card';
 import { PlanoAcao } from '@/components/insights/plano-acao';
+import { AcompanhamentoAcoesCard } from '@/components/insights/acompanhamento-acoes';
 import { AlertCard } from '@/components/dashboard/alert-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -31,6 +32,7 @@ import {
   periodoAtual,
   capitalizarPrimeira,
 } from '@/lib/formatacao';
+import type { AcompanhamentoAcoes } from '@/lib/ia';
 import type { Alerta, AnaliseIA } from '@/types';
 
 export interface InsightCarregado {
@@ -47,6 +49,7 @@ interface Props {
   insight: InsightCarregado | null;
   alertas: Alerta[];
   iaConfigurada: boolean;
+  acompanhamento: AcompanhamentoAcoes | null;
 }
 
 export function CentroInsights({
@@ -54,6 +57,7 @@ export function CentroInsights({
   insight,
   alertas,
   iaConfigurada,
+  acompanhamento,
 }: Props): React.JSX.Element {
   const router = useRouter();
   const [gerando, setGerando] = React.useState(false);
@@ -168,6 +172,9 @@ export function CentroInsights({
           </div>
         </div>
       ) : null}
+
+      {/* ── O plano do mês anterior funcionou? ────────────────────── */}
+      {acompanhamento ? <AcompanhamentoAcoesCard acompanhamento={acompanhamento} /> : null}
 
       {/* ── Análise da IA ─────────────────────────────────────────── */}
       {insight ? (

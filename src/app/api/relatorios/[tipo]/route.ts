@@ -176,9 +176,12 @@ export async function GET(request: Request, { params }: Contexto): Promise<NextR
           `Fluxo ${ano}`,
           fluxo.map((f) => ({
             Período: f.periodo,
-            'Entradas (R$)': f.entradas,
-            'Saídas (R$)': f.saidas,
-            'Saldo (R$)': f.saldo,
+            'Entradas projetadas (R$)': f.entradas,
+            'Entradas realizadas (R$)': f.entradasRealizadas,
+            'A receber (R$)': f.entradasPrevistas,
+            'Saídas projetadas (R$)': f.saidas,
+            'Saldo projetado (R$)': f.saldo,
+            'Saldo realizado (R$)': f.saldoRealizado,
           })),
         );
         nome = `menegatti_fluxo_anual_${ano}.xlsx`;

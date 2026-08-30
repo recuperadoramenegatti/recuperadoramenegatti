@@ -19,6 +19,7 @@ import {
   EIXO,
   fmt,
   GRADE,
+  LARGURA_EIXO_VALOR,
   GraficoVazio,
   Legenda,
   MolduraGrafico,
@@ -105,7 +106,7 @@ export function FaturamentoChart({ serie }: { serie: SerieMensal[] }): React.JSX
               axisLine={false}
               tick={EIXO.tick}
               tickFormatter={fmt.moedaCompacta}
-              width={62}
+              width={LARGURA_EIXO_VALOR}
             />
 
             <Tooltip

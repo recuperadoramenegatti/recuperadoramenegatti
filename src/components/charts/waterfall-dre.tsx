@@ -8,6 +8,7 @@ import {
   CORES_ESTADO,
   EIXO,
   fmt,
+  LARGURA_EIXO_VALOR,
   GraficoVazio,
   MolduraGrafico,
   SUPERFICIE,
@@ -81,7 +82,7 @@ export function WaterfallDRE({ passos }: { passos: PassoWaterfall[] }): React.JS
               axisLine={false}
               tick={EIXO.tick}
               tickFormatter={fmt.moedaCompacta}
-              width={62}
+              width={LARGURA_EIXO_VALOR}
             />
 
             <Tooltip

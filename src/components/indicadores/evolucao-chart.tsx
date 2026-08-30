@@ -17,6 +17,7 @@ import {
   EIXO,
   fmt,
   GRADE,
+  LARGURA_EIXO_VALOR,
   GraficoVazio,
   MolduraGrafico,
   SUPERFICIE,
@@ -116,7 +117,7 @@ export function EvolucaoChart({
               axisLine={false}
               tick={EIXO.tick}
               tickFormatter={configuracao.formatador}
-              width={68}
+              width={LARGURA_EIXO_VALOR}
             />
             <Tooltip
               cursor={CURSOR_LINHA}

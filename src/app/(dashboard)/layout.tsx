@@ -4,12 +4,18 @@ import { Sidebar } from '@/components/layout/sidebar';
 import { Header } from '@/components/layout/header';
 import { getConfig } from '@/lib/calculos';
 import { calcularAlertas, contarPorNivel } from '@/lib/alertas';
+import { executarTarefasAutomaticas } from '@/lib/tarefas-automaticas';
 
 export default async function LayoutDashboard({
   children,
 }: Readonly<{ children: React.ReactNode }>): Promise<React.JSX.Element> {
   const sessao = await auth();
   if (!sessao?.user?.email) redirect('/login');
+
+  // Backup semanal e parecer mensal. Não bloqueia a renderização e roda no
+  // máximo uma vez por hora — este é o único agendador possível num sistema
+  // que vive na máquina da empresa, sem serviço de fundo.
+  executarTarefasAutomaticas();
 
   const [logo, alertas] = await Promise.all([getConfig('empresaLogo'), calcularAlertas()]);
   const contagem = contarPorNivel(alertas);

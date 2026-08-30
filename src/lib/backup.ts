@@ -322,23 +322,29 @@ export async function agendarBackupIncremental(): Promise<void> {
   }
 }
 
-/** Backup semanal completo — roda no primeiro acesso de cada domingo. */
+/**
+ * Backup semanal completo.
+ *
+ * A regra é "faz sete dias desde o último", não "é domingo". A jornada da
+ * Menegatti é de segunda a sábado: uma regra amarrada ao domingo nunca
+ * dispararia, porque ninguém abre o sistema no dia em que a oficina está
+ * fechada. Assim o backup acontece no primeiro acesso depois de completada
+ * a semana, seja ele numa terça ou num sábado.
+ */
 export async function verificarBackupSemanal(): Promise<void> {
   try {
-    const hoje = new Date();
-    if (hoje.getDay() !== 0) return; // 0 = domingo
-
-    const inicioDoDia = new Date(hoje);
-    inicioDoDia.setHours(0, 0, 0, 0);
-
-    const jaFeito = await prisma.backup.findFirst({
-      where: { tipo: 'automatico_semanal', createdAt: { gte: inicioDoDia } },
-      select: { id: true },
+    const ultimoSemanal = await prisma.backup.findFirst({
+      where: { tipo: 'automatico_semanal', status: 'concluido' },
+      orderBy: { createdAt: 'desc' },
+      select: { createdAt: true },
     });
-    if (jaFeito) return;
+
+    const UMA_SEMANA = 7 * 24 * 60 * 60 * 1000;
+    if (ultimoSemanal && Date.now() - ultimoSemanal.createdAt.getTime() < UMA_SEMANA) return;
 
     const backup = await gerarBackupZip('automatico_semanal');
     await salvarBackupLocal(backup, 'automatico_semanal');
+    console.info('[backup] Backup semanal automático concluído.');
   } catch (erro) {
     console.error('[backup] Backup semanal falhou:', extrairMensagemErro(erro));
   }

@@ -16,6 +16,7 @@ import {
   diasNoPeriodo,
   formatarMoeda,
   formatarPeriodoExtenso,
+  periodoDe,
 } from '@/lib/formatacao';
 import {
   buscarOSDoPeriodo,
@@ -542,6 +543,151 @@ export async function buscarInsight(periodo: string): Promise<{
     };
   } catch (erro) {
     console.error('[ia] Falha ao buscar insight:', extrairMensagemErro(erro));
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  GERAÇÃO AUTOMÁTICA MENSAL
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Gera o parecer do mês anterior automaticamente, uma única vez.
+ *
+ * Roda sobre o mês FECHADO, não sobre o corrente: um parecer emitido no dia 3
+ * analisaria três dias de faturamento e concluiria que a empresa quebrou.
+ * A partir do dia 3 o mês anterior já está consolidado o bastante para valer
+ * uma análise.
+ *
+ * Nunca lança — é chamada por uma tarefa de fundo, e falta de chave ou de
+ * internet não pode virar erro de tela.
+ */
+export async function verificarInsightAutomatico(): Promise<void> {
+  try {
+    const habilitado = await prisma.configuracao.findUnique({
+      where: { chave: 'iaGeracaoAutomatica' },
+      select: { valor: true },
+    });
+    if (habilitado?.valor === 'false') return;
+
+    if (!(await iaConfigurada())) return;
+
+    const hoje = new Date();
+    // Antes do dia 3 o mês anterior ainda pode receber faturamentos atrasados.
+    if (hoje.getDate() < 3) return;
+
+    const periodoAlvo = deslocarPeriodo(periodoDe(hoje), -1);
+
+    const jaExiste = await prisma.insightIA.findFirst({
+      where: { periodo: periodoAlvo },
+      select: { id: true },
+    });
+    if (jaExiste) return;
+
+    // Sem OS no mês, não há o que analisar — e gastar tokens para a IA
+    // dizer "não há dados" é desperdício.
+    const ordens = await buscarOSDoPeriodo(periodoAlvo);
+    if (ordens.length === 0) return;
+
+    await gerarEsalvarInsight(periodoAlvo, 'automatico');
+    console.info(`[ia] Parecer de ${periodoAlvo} gerado automaticamente.`);
+  } catch (erro) {
+    console.error('[ia] Geração automática falhou:', extrairMensagemErro(erro));
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  ACOMPANHAMENTO DAS AÇÕES
+// ═══════════════════════════════════════════════════════════════════════════
+
+export interface AcompanhamentoAcoes {
+  periodoAnterior: string;
+  totalAcoes: number;
+  concluidas: number;
+  /** Indicadores do mês anterior contra o atual, para saber se adiantou. */
+  evolucao: Array<{
+    indicador: string;
+    anterior: number;
+    atual: number;
+    variacaoPct: number | null;
+    formato: 'moeda' | 'percentual' | 'numero';
+    melhorou: boolean;
+  }>;
+  veredito: string;
+}
+
+/**
+ * Compara o mês do último parecer com o mês seguinte, para responder à
+ * pergunta que importa: as ações marcadas como concluídas mudaram alguma
+ * coisa?
+ *
+ * Devolve `null` quando não há parecer anterior ou quando nenhuma ação foi
+ * marcada — sem ação concluída não há o que atribuir a ela.
+ */
+export async function acompanharAcoes(periodo: string): Promise<AcompanhamentoAcoes | null> {
+  try {
+    const periodoAnterior = deslocarPeriodo(periodo, -1);
+    const anterior = await buscarInsight(periodoAnterior);
+    if (!anterior) return null;
+
+    const totalAcoes =
+      anterior.analise.acoes_imediatas.length + anterior.analise.acoes_estrategicas.length;
+    const concluidas = Object.values(anterior.acoesConcluidas).filter(Boolean).length;
+    if (concluidas === 0) return null;
+
+    const snapshotAtual = await montarSnapshot(periodo);
+    const snapshotAnterior = anterior.snapshot;
+    if (!snapshotAnterior) return null;
+
+    const comparar = (
+      indicador: string,
+      valorAnterior: number,
+      valorAtual: number,
+      formato: 'moeda' | 'percentual' | 'numero',
+      melhorQuandoMaior = true,
+    ): AcompanhamentoAcoes['evolucao'][number] => {
+      const variacao = variacaoPercentual(valorAtual, valorAnterior);
+      const subiu = valorAtual > valorAnterior;
+      return {
+        indicador,
+        anterior: valorAnterior,
+        atual: valorAtual,
+        variacaoPct: variacao,
+        formato,
+        melhorou: melhorQuandoMaior ? subiu : !subiu,
+      };
+    };
+
+    const evolucao = [
+      comparar('Faturamento', snapshotAnterior.faturamento, snapshotAtual.faturamento, 'moeda'),
+      comparar(
+        'Margem de contribuição',
+        snapshotAnterior.margemContribuicaoPct,
+        snapshotAtual.margemContribuicaoPct,
+        'percentual',
+      ),
+      comparar('EBITDA', snapshotAnterior.ebitda, snapshotAtual.ebitda, 'moeda'),
+      comparar('Ocupação', snapshotAnterior.ocupacaoPct, snapshotAtual.ocupacaoPct, 'percentual'),
+      comparar(
+        'OS abaixo do mínimo',
+        snapshotAnterior.osAbaixoMinimo,
+        snapshotAtual.osAbaixoMinimo,
+        'numero',
+        false,
+      ),
+    ];
+
+    const melhoraram = evolucao.filter((e) => e.melhorou).length;
+    const veredito =
+      melhoraram >= 4
+        ? `${concluidas} de ${totalAcoes} ações concluídas, e ${melhoraram} dos 5 indicadores melhoraram. O plano está funcionando.`
+        : melhoraram >= 2
+          ? `${concluidas} de ${totalAcoes} ações concluídas, com ${melhoraram} dos 5 indicadores em melhora. Resultado parcial — vale insistir no que ficou pendente.`
+          : `${concluidas} de ${totalAcoes} ações concluídas, mas só ${melhoraram} dos 5 indicadores melhoraram. Ou as ações não atacaram a causa, ou algo fora delas puxou o resultado para baixo.`;
+
+    return { periodoAnterior, totalAcoes, concluidas, evolucao, veredito };
+  } catch (erro) {
+    console.error('[ia] Falha ao acompanhar as ações:', extrairMensagemErro(erro));
     return null;
   }
 }

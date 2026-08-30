@@ -52,6 +52,17 @@ export const GRADE = {
   strokeDasharray: '3 3',
 } as const;
 
+/**
+ * Largura reservada ao eixo de valores.
+ *
+ * O rótulo é ancorado à direita e transborda para a esquerda; se a faixa for
+ * estreita demais, o excesso é cortado pelo contêiner. O caractere que sobra
+ * de fora é justamente o primeiro — o sinal de menos. Um eixo apertado
+ * transforma "−R$ 395,9 mil" em "R$ 395,9 mil" e inverte a leitura de um
+ * déficit. 88px comportam o rótulo mais longo que os formatadores produzem.
+ */
+export const LARGURA_EIXO_VALOR = 88;
+
 /** Cor da superfície — usada nos anéis de 2px que separam marcas sobrepostas. */
 export const SUPERFICIE = 'var(--superficie-grafico)';
 
@@ -155,37 +166,67 @@ export function CaixaTooltip({
   );
 }
 
-/** Legenda horizontal. Presente sempre que houver 2 ou mais séries. */
+export interface ItemLegenda {
+  nome: string;
+  cor: string;
+  /** Traço tracejado — para séries projetadas. */
+  tracejado?: boolean;
+  /** Traço cheio em vez do ponto — quando o que distingue é o estilo de linha. */
+  linha?: boolean;
+}
+
+/**
+ * Legenda horizontal. Presente sempre que houver 2 ou mais séries.
+ *
+ * `rotulo` agrupa itens sob um título curto, para quando o gráfico codifica
+ * duas dimensões ao mesmo tempo (por exemplo estilo de linha para certeza e
+ * cor para sinal) e uma lista corrida não deixaria isso claro.
+ */
 export function Legenda({
   itens,
+  rotulo,
   className,
 }: {
-  itens: Array<{ nome: string; cor: string; tracejado?: boolean }>;
+  itens: ItemLegenda[];
+  rotulo?: string;
   className?: string;
 }): React.JSX.Element {
   return (
-    <ul className={cn('flex flex-wrap items-center gap-x-4 gap-y-1.5', className)}>
-      {itens.map((item) => (
-        <li key={item.nome} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          {item.tracejado ? (
-            <span
-              className="h-0.5 w-4 shrink-0 rounded-full"
-              style={{
-                backgroundImage: `repeating-linear-gradient(90deg, ${item.cor} 0 4px, transparent 4px 7px)`,
-              }}
-              aria-hidden
-            />
-          ) : (
-            <span
-              className="h-2 w-2 shrink-0 rounded-full"
-              style={{ backgroundColor: item.cor }}
-              aria-hidden
-            />
-          )}
-          {item.nome}
-        </li>
-      ))}
-    </ul>
+    <div className={cn('flex items-center gap-2', className)}>
+      {rotulo ? (
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+          {rotulo}
+        </span>
+      ) : null}
+      <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+        {itens.map((item) => (
+          <li key={item.nome} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            {item.tracejado ? (
+              <span
+                className="h-0.5 w-4 shrink-0 rounded-full"
+                style={{
+                  backgroundImage: `repeating-linear-gradient(90deg, ${item.cor} 0 4px, transparent 4px 7px)`,
+                }}
+                aria-hidden
+              />
+            ) : item.linha ? (
+              <span
+                className="h-0.5 w-4 shrink-0 rounded-full"
+                style={{ backgroundColor: item.cor }}
+                aria-hidden
+              />
+            ) : (
+              <span
+                className="h-2 w-2 shrink-0 rounded-full"
+                style={{ backgroundColor: item.cor }}
+                aria-hidden
+              />
+            )}
+            {item.nome}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

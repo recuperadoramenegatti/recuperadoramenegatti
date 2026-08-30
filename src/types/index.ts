@@ -373,9 +373,20 @@ export interface DiaFluxoCaixa {
   dia: number;
   entradas: number;
   saidas: number;
+  /** Parcela das entradas já efetivamente recebida. */
+  entradasRealizadas: number;
+  /** Parcela das saídas já efetivamente paga. */
+  saidasRealizadas: number;
   saldoDia: number;
   saldoAcumulado: number;
+  /**
+   * Saldo considerando apenas o que já aconteceu. Só existe até hoje;
+   * `null` nos dias futuros, para que a linha do realizado termine na data
+   * de hoje em vez de despencar a zero.
+   */
+  saldoRealizado: number | null;
   negativo: boolean;
+  passado: boolean;
 }
 
 export interface ResultadoFluxoCaixa {

@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import { CentroInsights, type InsightCarregado } from '@/components/insights/centro-insights';
 import { PageHeader } from '@/components/comum/page-header';
 import { SkeletonGrafico } from '@/components/ui/skeleton';
-import { buscarInsight, iaConfigurada } from '@/lib/ia';
+import { acompanharAcoes, buscarInsight, iaConfigurada } from '@/lib/ia';
 import { calcularAlertas } from '@/lib/alertas';
 import { formatarPeriodoExtenso, periodoAtual } from '@/lib/formatacao';
 
@@ -32,10 +32,11 @@ export default function PaginaInsights({ searchParams }: Props): React.JSX.Eleme
 }
 
 async function ConteudoInsights({ periodo }: { periodo: string }): Promise<React.JSX.Element> {
-  const [insight, alertas, configurada] = await Promise.all([
+  const [insight, alertas, configurada, acompanhamento] = await Promise.all([
     buscarInsight(periodo),
     calcularAlertas(periodo),
     iaConfigurada(),
+    acompanharAcoes(periodo),
   ]);
 
   const carregado: InsightCarregado | null = insight
@@ -55,6 +56,7 @@ async function ConteudoInsights({ periodo }: { periodo: string }): Promise<React
       insight={carregado}
       alertas={alertas}
       iaConfigurada={configurada}
+      acompanhamento={acompanhamento}
     />
   );
 }
