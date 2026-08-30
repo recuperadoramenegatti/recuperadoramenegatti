@@ -28,7 +28,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { formatarPeriodoExtenso, iniciais, periodoAtual } from '@/lib/formatacao';
+import { formatarPeriodoExtenso, iniciais, periodoAtual,
+  capitalizarPrimeira,
+} from '@/lib/formatacao';
 
 interface HeaderProps {
   nomeUsuario: string;
@@ -52,15 +54,25 @@ export function Header({
 
   const migalhas = React.useMemo(() => {
     const partes = pathname.split('/').filter(Boolean);
-    const acumulado: Array<{ href: string; titulo: string }> = [];
+    const acumulado: Array<{ href: string; titulo: string; navegavel: boolean }> = [];
     let caminho = '';
+
     for (const parte of partes) {
       caminho += `/${parte}`;
-      const titulo =
-        TITULOS_ROTA[caminho] ??
-        (parte.length > 20 ? 'Detalhe' : parte.charAt(0).toUpperCase() + parte.slice(1));
-      acumulado.push({ href: caminho, titulo });
+      const conhecida = TITULOS_ROTA[caminho];
+      acumulado.push({
+        href: caminho,
+        titulo:
+          conhecida ??
+          // Ids de detalhe são longos e não dizem nada ao usuário.
+          (parte.length > 20 ? 'Detalhe' : parte.charAt(0).toUpperCase() + parte.slice(1)),
+        // Só vira link o que é uma rota de verdade. "/financeiro", por
+        // exemplo, é apenas um segmento de agrupamento: transformá-lo em
+        // link faria o Next prefetchar uma página inexistente.
+        navegavel: conhecida !== undefined,
+      });
     }
+
     return acumulado;
   }, [pathname]);
 
@@ -80,18 +92,20 @@ export function Header({
             ) : null}
             {indice === migalhas.length - 1 ? (
               <span className="truncate font-medium">{migalha.titulo}</span>
-            ) : (
+            ) : migalha.navegavel ? (
               <Link
                 href={migalha.href}
                 className="truncate text-muted-foreground transition-colors hover:text-foreground"
               >
                 {migalha.titulo}
               </Link>
+            ) : (
+              <span className="truncate text-muted-foreground">{migalha.titulo}</span>
             )}
           </React.Fragment>
         ))}
-        <span className="ml-3 hidden shrink-0 text-xs capitalize text-muted-foreground/70 lg:inline">
-          · {formatarPeriodoExtenso(periodoAtual())}
+        <span className="ml-3 hidden shrink-0 text-xs text-muted-foreground/70 lg:inline">
+          · {capitalizarPrimeira(formatarPeriodoExtenso(periodoAtual()))}
         </span>
       </nav>
 

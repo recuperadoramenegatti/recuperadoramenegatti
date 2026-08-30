@@ -245,7 +245,7 @@ export function FormularioOS({
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
       {/* ═══════════════ PAINEL ESQUERDO — FORMULÁRIO ═══════════════ */}
-      <div className="space-y-5">
+      <div className="space-y-5 pb-2">
         {/* Bloco 1 — Identificação */}
         <Bloco titulo="Identificação" numero={1}>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -679,8 +679,12 @@ export function FormularioOS({
           />
         </Bloco>
 
-        {/* ── Ações ─────────────────────────────────────────────────────── */}
-        <div className="sticky bottom-4 z-10 flex flex-wrap gap-2 rounded-2xl border border-white/10 bg-popover/90 p-3 shadow-card backdrop-blur-xl">
+        {/*
+          Ações. A barra é fixa no rodapé da coluna; o espaçador abaixo dela
+          garante que o último bloco do formulário role até ficar visível em
+          vez de terminar escondido atrás dela.
+        */}
+        <div className="sticky bottom-4 z-10 flex flex-wrap gap-2 rounded-2xl border border-white/15 bg-[#161f33] p-3 shadow-[0_-4px_24px_rgba(0,0,0,0.5)]">
           <Button onClick={() => void salvar('orcado')} carregando={salvando} className="flex-1 sm:flex-none">
             <Save className="h-4 w-4" />
             {osId ? 'Salvar alterações' : 'Salvar orçamento'}
@@ -721,6 +725,8 @@ export function FormularioOS({
             Novo
           </Button>
         </div>
+
+        <div className="h-2" aria-hidden />
       </div>
 
       {/* ═══════════════ PAINEL DIREITO — RESULTADO ═══════════════ */}

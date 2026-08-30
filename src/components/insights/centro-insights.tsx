@@ -29,6 +29,7 @@ import {
   formatarDataHora,
   formatarPeriodoExtenso,
   periodoAtual,
+  capitalizarPrimeira,
 } from '@/lib/formatacao';
 import type { Alerta, AnaliseIA } from '@/types';
 
@@ -112,8 +113,8 @@ export function CentroInsights({
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="min-w-36 px-2 text-center text-sm font-medium capitalize">
-              {formatarPeriodoExtenso(periodo)}
+            <span className="min-w-36 px-2 text-center text-sm font-medium">
+              {capitalizarPrimeira(formatarPeriodoExtenso(periodo))}
             </span>
             <Button
               variant="ghost"
@@ -174,7 +175,7 @@ export function CentroInsights({
       ) : (
         <EmptyState
           icone={Sparkles}
-          titulo={`Nenhuma análise gerada para ${formatarPeriodoExtenso(periodo)}`}
+          titulo={`Nenhuma análise gerada para ${capitalizarPrimeira(formatarPeriodoExtenso(periodo))}`}
           descricao={
             iaConfigurada
               ? 'Clique em "Gerar análise" para que a IA interprete os números deste mês e produza um parecer gerencial com plano de ação.'
@@ -184,7 +185,7 @@ export function CentroInsights({
             iaConfigurada ? (
               <Button variant="ia" onClick={() => void gerar()} carregando={gerando}>
                 <Sparkles className="h-4 w-4" />
-                Gerar análise de {formatarPeriodoExtenso(periodo)}
+                Gerar análise de {capitalizarPrimeira(formatarPeriodoExtenso(periodo))}
               </Button>
             ) : undefined
           }

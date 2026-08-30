@@ -1,12 +1,5 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import {
-  Activity,
-  BadgePercent,
-  ClipboardCheck,
-  Scale,
-  TrendingUp,
-} from 'lucide-react';
 import { KPICard } from '@/components/dashboard/kpi-card';
 import { AlertsFeed } from '@/components/dashboard/alerts-feed';
 import { OSRecentesTable, type LinhaOSRecente } from '@/components/dashboard/os-recentes-table';
@@ -31,7 +24,14 @@ import {
   resumirPeriodo,
 } from '@/lib/calculos';
 import { calcularAlertas } from '@/lib/alertas';
-import { formatarMoeda, formatarPeriodoExtenso, periodoAtual } from '@/lib/formatacao';
+import {
+  capitalizarPrimeira,
+  formatarMoeda,
+  formatarNumero,
+  formatarPercentual,
+  formatarPeriodoExtenso,
+  periodoAtual,
+} from '@/lib/formatacao';
 import type { ClassificacaoMargem, KPIsDashboard } from '@/types';
 
 export const metadata: Metadata = { title: 'Dashboard' };
@@ -148,11 +148,11 @@ function LinhaKPIs({ kpis }: { kpis: KPIsDashboard }): React.JSX.Element {
         rotulo="Faturamento do mês"
         valor={kpis.faturamento.atual}
         formato="moeda"
-        icone={TrendingUp}
+        icone="faturamento"
         tom="ambar"
         variacaoPct={kpis.faturamento.variacaoPct}
         progresso={kpis.percentualMeta}
-        progressoRotulo={`${kpis.percentualMeta.toFixed(0)}% da meta de ${formatarMoeda(kpis.metaFaturamento)}`}
+        progressoRotulo={`${formatarPercentual(kpis.percentualMeta, 0)} da meta de ${formatarMoeda(kpis.metaFaturamento)}`}
         href="/financeiro/dre"
         dica="Receita das OS finalizadas ou faturadas no mês, comparada ao mês anterior."
       />
@@ -161,7 +161,7 @@ function LinhaKPIs({ kpis }: { kpis: KPIsDashboard }): React.JSX.Element {
         rotulo="Margem de contribuição"
         valor={kpis.margemContribuicao.atual}
         formato="percentual"
-        icone={BadgePercent}
+        icone="margem"
         tom={
           kpis.classificacaoMargem === 'critica'
             ? 'vermelho'
@@ -179,10 +179,10 @@ function LinhaKPIs({ kpis }: { kpis: KPIsDashboard }): React.JSX.Element {
         rotulo="EBITDA estimado"
         valor={kpis.ebitda.atual}
         formato="moeda"
-        icone={Activity}
+        icone="ebitda"
         tom={kpis.ebitda.atual >= 0 ? 'azul' : 'vermelho'}
         variacaoPct={kpis.ebitda.variacaoPct}
-        legenda={`${kpis.ebitdaPct.toFixed(1)}% da receita`}
+        legenda={`${formatarPercentual(kpis.ebitdaPct)} da receita`}
         href="/financeiro/dre"
         dica="Resultado operacional antes de depreciação, incluindo o custo da capacidade ociosa."
       />
@@ -191,10 +191,10 @@ function LinhaKPIs({ kpis }: { kpis: KPIsDashboard }): React.JSX.Element {
         rotulo="OS finalizadas"
         valor={kpis.osFinalizadas.atual}
         formato="numero"
-        icone={ClipboardCheck}
+        icone="ordens"
         tom="roxo"
         variacaoPct={kpis.osFinalizadas.variacaoPct}
-        legenda={`média histórica: ${kpis.mediaHistoricaOS}`}
+        legenda={`média histórica: ${formatarNumero(kpis.mediaHistoricaOS, 1)}`}
         href="/ordens"
         dica="Ordens finalizadas, faturadas ou pagas no mês, contra a média dos 12 meses anteriores."
       />
@@ -203,7 +203,7 @@ function LinhaKPIs({ kpis }: { kpis: KPIsDashboard }): React.JSX.Element {
         rotulo="Ponto de equilíbrio"
         valor={breakEven.pontoEquilibrioReceita}
         formato="moeda"
-        icone={Scale}
+        icone="equilibrio"
         tom={
           breakEven.status === 'coberto'
             ? 'verde'
@@ -213,7 +213,7 @@ function LinhaKPIs({ kpis }: { kpis: KPIsDashboard }): React.JSX.Element {
         }
         classificacao={rotuloEquilibrio}
         progresso={Math.min(100, breakEven.indiceCobertura * 100)}
-        progressoRotulo={`cobertura de ${(breakEven.indiceCobertura * 100).toFixed(0)}%`}
+        progressoRotulo={`cobertura de ${formatarPercentual(breakEven.indiceCobertura * 100, 0)}`}
         href="/indicadores"
         dica="Faturamento bruto necessário para zerar o EBITDA, dados os custos fixos e o consumo de insumos."
       />

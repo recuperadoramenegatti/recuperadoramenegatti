@@ -4,7 +4,9 @@ import * as React from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { CalendarRange, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { deslocarPeriodo, formatarPeriodoExtenso, periodoAtual } from '@/lib/formatacao';
+import { deslocarPeriodo, formatarPeriodoExtenso, periodoAtual,
+  capitalizarPrimeira,
+} from '@/lib/formatacao';
 
 /** Período de referência dos relatórios. Estado na URL. */
 export function SeletorPeriodoRelatorio({ periodo }: { periodo: string }): React.JSX.Element {
@@ -36,8 +38,8 @@ export function SeletorPeriodoRelatorio({ periodo }: { periodo: string }): React
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <span className="min-w-36 px-2 text-center text-sm font-medium capitalize">
-          {formatarPeriodoExtenso(periodo)}
+        <span className="min-w-36 px-2 text-center text-sm font-medium">
+          {capitalizarPrimeira(formatarPeriodoExtenso(periodo))}
         </span>
         <Button
           variant="ghost"

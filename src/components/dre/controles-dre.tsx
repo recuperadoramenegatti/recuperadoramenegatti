@@ -5,7 +5,9 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight, FileDown, GitCompare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { deslocarPeriodo, formatarPeriodoExtenso, periodoAtual } from '@/lib/formatacao';
+import { deslocarPeriodo, formatarPeriodoExtenso, periodoAtual,
+  capitalizarPrimeira,
+} from '@/lib/formatacao';
 import type { Regime } from '@/types';
 
 /** Seletor de período, regime e comparativo do DRE. Estado na URL. */
@@ -45,8 +47,8 @@ export function ControlesDRE({
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <span className="min-w-36 px-2 text-center text-sm font-medium capitalize">
-          {formatarPeriodoExtenso(periodo)}
+        <span className="min-w-36 px-2 text-center text-sm font-medium">
+          {capitalizarPrimeira(formatarPeriodoExtenso(periodo))}
         </span>
         <Button
           variant="ghost"

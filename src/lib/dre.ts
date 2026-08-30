@@ -295,11 +295,15 @@ export function calcularWaterfall(dre: ResultadoDRE): PassoWaterfall[] {
     } else if (passo.tipo === 'total') {
       saida.push({ nome: passo.nome, valor: arredondar(acumulado), base: 0, tipo: 'total' });
     } else {
+      // Aresta inferior da barra flutuante. Não pode ser truncada em zero:
+      // quando o acumulado fica negativo — o que acontece sempre que os
+      // custos superam a receita — truncar empilharia a barra a partir do
+      // zero e a cascata deixaria de fechar.
       const base = passo.delta >= 0 ? acumulado : acumulado + passo.delta;
       saida.push({
         nome: passo.nome,
         valor: arredondar(Math.abs(passo.delta)),
-        base: arredondar(Math.max(0, base)),
+        base: arredondar(base),
         tipo: passo.tipo,
       });
       acumulado += passo.delta;

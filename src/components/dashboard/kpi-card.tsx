@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { ArrowDownRight, ArrowRight, ArrowUpRight, type LucideIcon } from 'lucide-react';
+import { ArrowDownRight, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ICONES_KPI, type NomeIconeKPI } from '@/components/dashboard/icones-kpi';
 import { MoedaAnimada, NumeroAnimado, PercentualAnimado } from '@/components/comum/numero-animado';
 import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -43,7 +44,11 @@ export interface KPICardProps {
   rotulo: string;
   valor: number;
   formato: FormatoKPI;
-  icone: LucideIcon;
+  /**
+   * Nome do ícone, não o componente: props atravessam a fronteira
+   * Server → Client serializadas, e um componente React não é serializável.
+   */
+  icone: NomeIconeKPI;
   tom: TomKPI;
   /** Variação percentual contra o mês anterior. `null` quando não há base. */
   variacaoPct?: number | null;
@@ -62,7 +67,7 @@ export function KPICard({
   rotulo,
   valor,
   formato,
-  icone: Icone,
+  icone,
   tom,
   variacaoPct,
   inverterVariacao = false,
@@ -73,6 +78,7 @@ export function KPICard({
   href,
   dica,
 }: KPICardProps): React.JSX.Element {
+  const Icone = ICONES_KPI[icone];
   const positiva = variacaoPct !== null && variacaoPct !== undefined && variacaoPct > 0;
   const negativa = variacaoPct !== null && variacaoPct !== undefined && variacaoPct < 0;
   const boa = inverterVariacao ? negativa : positiva;
@@ -94,9 +100,24 @@ export function KPICard({
           <Icone className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
         </div>
 
-        <div className={cn('mt-3 text-3xl font-bold tracking-tight tabular-nums', GRADIENTES[tom])}>
+        {/*
+          O corpo do número escala com a largura da janela em vez de saltar
+          entre breakpoints. Com cinco colunas, o card fica estreito: em
+          1280px "−R$ 365.047" em text-3xl não cabe, e em 1920px text-2xl
+          ficaria pequeno demais. O clamp resolve os dois extremos e todos
+          os pontos entre eles.
+        */}
+        <div
+          className={cn(
+            'mt-3 whitespace-nowrap text-[clamp(1.15rem,1.5vw,1.875rem)] font-bold leading-tight tracking-tight tabular-nums',
+            GRADIENTES[tom],
+          )}
+        >
           {formato === 'moeda' ? (
-            <MoedaAnimada valor={valor} casas={valor >= 100000 ? 0 : 2} />
+            // Acima de cem mil os centavos não informam nada e estouram a
+            // largura do card. `Math.abs` porque um EBITDA de −R$ 365 mil
+            // é tão grande quanto um de +R$ 365 mil.
+            <MoedaAnimada valor={valor} casas={Math.abs(valor) >= 100000 ? 0 : 2} />
           ) : formato === 'percentual' ? (
             <PercentualAnimado valor={valor} />
           ) : (
