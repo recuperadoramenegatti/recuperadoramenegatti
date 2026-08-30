@@ -13,7 +13,8 @@
     "db:studio": "prisma studio",
     "setup": "prisma generate && prisma db push && prisma db seed",
     "verificar": "tsx scripts/verificar-calculos.ts",
-    "smoke": "tsx scripts/smoke-os.ts"
+    "smoke": "tsx scripts/smoke-os.ts",
+    "smoke:backup": "tsx scripts/smoke-backup.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

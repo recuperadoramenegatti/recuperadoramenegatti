@@ -581,55 +581,110 @@ export async function restaurarBackup(
         await tx.user.deleteMany();
       }
 
+      /**
+       * Insere uma tabela.
+       *
+       * No modo "mesclar", registros já existentes são detectados por uma
+       * consulta explícita e simplesmente pulados. Deixar o banco lançar a
+       * violação de chave única também funcionaria, mas usar exceção para
+       * um caminho esperado enche o log de erro com algo que não é erro.
+       */
       const inserir = async <T extends Record<string, unknown>>(
         nome: string,
         registros: T[],
+        existe: (registro: T) => Promise<boolean>,
         criar: (registro: T) => Promise<unknown>,
       ): Promise<void> => {
         let ok = 0;
-        let falhas = 0;
-        for (const registro of registros) {
+        let pulados = 0;
+
+        for (const bruto of registros) {
+          const registro = reviverDatas(bruto);
           try {
-            await criar(reviverDatas(registro));
+            if (modo === 'mesclar' && (await existe(registro))) {
+              pulados += 1;
+              continue;
+            }
+            await criar(registro);
             ok += 1;
-          } catch {
-            // No modo "mesclar" é esperado: o registro já existe.
-            falhas += 1;
+          } catch (erro) {
+            // Registro malformado no backup: pula sem derrubar a restauração
+            // inteira — importar 99% é melhor que importar nada.
+            console.error(
+              `[backup] Registro ignorado em "${nome}":`,
+              extrairMensagemErro(erro),
+            );
+            pulados += 1;
           }
         }
+
         importados[nome] = ok;
-        ignorados[nome] = falhas;
+        ignorados[nome] = pulados;
       };
 
-      await inserir('usuarios', comoArray(dados.usuarios), (r) =>
-        tx.user.create({ data: r as never }),
+      const id = (r: Record<string, unknown>): string => String(r.id ?? '');
+
+      await inserir(
+        'usuarios',
+        comoArray(dados.usuarios),
+        async (r) => (await tx.user.count({ where: { email: String(r.email) } })) > 0,
+        (r) => tx.user.create({ data: r as never }),
       );
-      await inserir('configuracoes', comoArray(dados.configuracoes), (r) =>
-        modo === 'substituir'
-          ? tx.configuracao.create({ data: r as never })
-          : tx.configuracao.upsert({
-              where: { chave: String(r.chave) },
-              update: { valor: String(r.valor) },
-              create: r as never,
-            }),
+
+      await inserir(
+        'configuracoes',
+        comoArray(dados.configuracoes),
+        async () => false, // configurações usam upsert e sempre valem a escrita
+        (r) =>
+          modo === 'substituir'
+            ? tx.configuracao.create({ data: r as never })
+            : tx.configuracao.upsert({
+                where: { chave: String(r.chave) },
+                update: { valor: String(r.valor) },
+                create: r as never,
+              }),
       );
-      await inserir('centrosCusto', comoArray(dados.centrosCusto), (r) =>
-        tx.centroCusto.create({ data: r as never }),
+
+      await inserir(
+        'centrosCusto',
+        comoArray(dados.centrosCusto),
+        async (r) => (await tx.centroCusto.count({ where: { slug: String(r.slug) } })) > 0,
+        (r) => tx.centroCusto.create({ data: r as never }),
       );
-      await inserir('clientes', comoArray(dados.clientes), (r) =>
-        tx.cliente.create({ data: r as never }),
+
+      await inserir(
+        'clientes',
+        comoArray(dados.clientes),
+        async (r) => (await tx.cliente.count({ where: { id: id(r) } })) > 0,
+        (r) => tx.cliente.create({ data: r as never }),
       );
-      await inserir('ordensServico', comoArray(dados.ordensServico), (r) =>
-        tx.ordemServico.create({ data: r as never }),
+
+      await inserir(
+        'ordensServico',
+        comoArray(dados.ordensServico),
+        async (r) => (await tx.ordemServico.count({ where: { numero: String(r.numero) } })) > 0,
+        (r) => tx.ordemServico.create({ data: r as never }),
       );
-      await inserir('itensCentro', comoArray(dados.itensCentro), (r) =>
-        tx.oSItemCentro.create({ data: r as never }),
+
+      await inserir(
+        'itensCentro',
+        comoArray(dados.itensCentro),
+        async (r) => (await tx.oSItemCentro.count({ where: { id: id(r) } })) > 0,
+        (r) => tx.oSItemCentro.create({ data: r as never }),
       );
-      await inserir('lancamentos', comoArray(dados.lancamentos), (r) =>
-        tx.lancamentoFinanceiro.create({ data: r as never }),
+
+      await inserir(
+        'lancamentos',
+        comoArray(dados.lancamentos),
+        async (r) => (await tx.lancamentoFinanceiro.count({ where: { id: id(r) } })) > 0,
+        (r) => tx.lancamentoFinanceiro.create({ data: r as never }),
       );
-      await inserir('insights', comoArray(dados.insights), (r) =>
-        tx.insightIA.create({ data: r as never }),
+
+      await inserir(
+        'insights',
+        comoArray(dados.insights),
+        async (r) => (await tx.insightIA.count({ where: { id: id(r) } })) > 0,
+        (r) => tx.insightIA.create({ data: r as never }),
       );
     },
     { timeout: 120_000, maxWait: 20_000 },
