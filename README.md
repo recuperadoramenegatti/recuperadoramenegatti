@@ -26,12 +26,24 @@ Anthropic, usada apenas no Centro de Inteligência.
 
 ## Instalação
 
+Duas formas de colocar o sistema no ar — escolha a que fizer mais sentido:
+
+### Opção 1 — Vercel, sem instalar nada (mais fácil)
+
+[![Deploy na Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Frecuperadoramenegatti%2Frecuperadoramenegatti%2Ftree%2Fclaude%2Fmenegatti-financial-system-jmoh5i&project-name=menegatti-erp&repository-name=menegatti-erp)
+
+Não precisa instalar Node.js nem abrir terminal — só o navegador. Os dados
+ficam num banco de dados na nuvem em vez de no computador da empresa. Guia
+completo, passo a passo: **[docs/DEPLOY_VERCEL.md](docs/DEPLOY_VERCEL.md)**.
+
+### Opção 2 — Na máquina da empresa
+
 **Para instalar na máquina da empresa, siga o guia passo a passo:
 [docs/INSTALACAO.md](docs/INSTALACAO.md).** Ele é escrito para quem não
 programa: dois cliques em `instalar.bat` no Windows, ou `./instalar.sh` no
 Linux e no macOS. O instalador cuida de tudo — dependências, segredo de
 sessão, banco, compilação, atalho na área de trabalho e início automático
-junto com o computador.
+junto com o computador. Os dados ficam fisicamente no computador da empresa.
 
 O que segue é o caminho manual, para quem vai mexer no código.
 
