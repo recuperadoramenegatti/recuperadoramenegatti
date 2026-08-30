@@ -1,0 +1,225 @@
+// Recuperadora Menegatti — Sistema de Gestão Financeira e Precificação
+// Banco local SQLite. Todos os parâmetros financeiros vivem em `Configuracao`,
+// nunca hardcoded no código de cálculo (ver src/lib/calculos.ts).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String // bcrypt hash (12 rounds)
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Armazena todos os parâmetros financeiros editáveis do sistema.
+/// `valor` é sempre string; `tipo` informa como fazer o parse.
+model Configuracao {
+  id        String   @id @default(cuid())
+  chave     String   @unique
+  valor     String
+  tipo      String // "number" | "string" | "boolean" | "secret"
+  grupo     String   @default("geral") // "empresa" | "financeiro" | "ia" | "aparencia"
+  descricao String?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([grupo])
+}
+
+model Cliente {
+  id          String   @id @default(cuid())
+  codigo      String   @unique
+  nome        String
+  documento   String? // CNPJ ou CPF
+  telefone    String?
+  email       String?
+  cidade      String?
+  estado      String?
+  observacoes String?
+  ativo       Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ordens OrdemServico[]
+
+  @@index([nome])
+  @@index([ativo])
+}
+
+model CentroCusto {
+  id            String   @id @default(cuid())
+  nome          String   @unique
+  slug          String   @unique
+  qtdMaquinas   Int      @default(1)
+  qtdOperadores Int      @default(1)
+  thmEstimado   Float // Taxa Hora-Máquina (R$/h)
+  ordem         Int      @default(0)
+  ativo         Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  itens OSItemCentro[]
+
+  @@index([ativo, ordem])
+}
+
+model OrdemServico {
+  id        String  @id @default(cuid())
+  numero    String  @unique
+  clienteId String
+  cliente   Cliente @relation(fields: [clienteId], references: [id])
+
+  tipo       String // "recuperacao" | "fabricacao" | "manutencao" | "outro"
+  descricao  String
+  prioridade String @default("normal") // "normal" | "urgente" | "muito_urgente"
+  status     String @default("orcado") // "orcado" | "em_execucao" | "aguardando_pecas" | "finalizado" | "faturado" | "pago" | "cancelado"
+
+  // Precificação (valores congelados no momento do cálculo)
+  margemDesejada  Float // %
+  descontoMaximo  Float  @default(0) // %
+  custoTotalCalc  Float // R$
+  precoMinimoCalc Float // R$ antes de impostos
+  precoSugerido   Float // R$ ao cliente
+  precoFinal      Float? // R$ definido pelo usuário
+  margemReal      Float? // % sobre precoFinal (ou precoSugerido se nulo)
+  aliquotaUsada   Float  @default(0)
+
+  // Comparativo com peça nova (apenas recuperação)
+  precoPecaNova      Float?
+  fontePrecoPecaNova String?
+  descontoTolerado   Float? // % máximo tolerável vs peça nova
+
+  // Tempos
+  horasSetup      Float  @default(0.5)
+  horasEstimadas  Float  @default(0)
+  horasRealizadas Float?
+
+  // Insumos
+  custoMateriais   Float  @default(0)
+  markupMateriais  Float  @default(20)
+  custoConsumiveis Float  @default(0)
+  custoFerramentas Float  @default(0)
+  insumosExtras    String @default("[]") // JSON: [{nome, valor}]
+
+  // Datas
+  dataOrcamento       DateTime  @default(now())
+  dataPrevisaoEntrega DateTime?
+  dataFinalizacao     DateTime?
+  dataFaturamento     DateTime?
+  dataRecebimento     DateTime?
+  validadeOrcamento   Int       @default(30) // dias
+
+  observacoes String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  itens       OSItemCentro[]
+  lancamentos LancamentoFinanceiro[]
+  logs        LogAlteracao[]
+
+  @@index([status])
+  @@index([tipo])
+  @@index([clienteId])
+  @@index([dataOrcamento])
+  @@index([dataFinalizacao])
+}
+
+model OSItemCentro {
+  id      String       @id @default(cuid())
+  ordemId String
+  ordem   OrdemServico @relation(fields: [ordemId], references: [id], onDelete: Cascade)
+
+  centroId String
+  centro   CentroCusto @relation(fields: [centroId], references: [id])
+
+  horasEstimadas  Float
+  horasRealizadas Float?
+
+  // Snapshots das taxas usadas no momento do orçamento (auditabilidade)
+  thhUsado Float
+  thmUsado Float
+  cfrUsado Float
+
+  custoCalculado Float
+
+  @@unique([ordemId, centroId])
+  @@index([centroId])
+}
+
+model LancamentoFinanceiro {
+  id        String   @id @default(cuid())
+  tipo      String // "receita" | "despesa"
+  categoria String // "receita_servico" | "insumos" | "consumiveis" | "ferramentas" | "mod" | "folha" | "prolabore" | "energia" | "manutencao" | "aluguel" | "admin" | "depreciacao" | "financeiro" | "outros"
+  descricao String
+  valor     Float
+  data      DateTime
+  regime    String   @default("competencia") // "competencia" | "caixa" | "ambos"
+  recorrente Boolean @default(false)
+
+  osId String?
+  os   OrdemServico? @relation(fields: [osId], references: [id], onDelete: SetNull)
+
+  pago          Boolean   @default(false)
+  dataPagamento DateTime?
+  observacoes   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([data])
+  @@index([tipo, categoria])
+  @@index([osId])
+}
+
+model InsightIA {
+  id              String   @id @default(cuid())
+  periodo         String // "2026-08"
+  dadosSnapshot   String // JSON
+  analiseGerada   String // JSON estruturado
+  acoesConcluidas String   @default("{}") // JSON: { "acao-0": true }
+  modeloUsado     String
+  tokensUsados    Int?
+  origem          String   @default("manual") // "manual" | "automatico"
+  createdAt       DateTime @default(now())
+
+  @@index([periodo])
+}
+
+model Backup {
+  id           String   @id @default(cuid())
+  tipo         String // "manual" | "automatico_incremental" | "automatico_semanal"
+  filename     String
+  caminho      String?
+  tamanhoBytes Int      @default(0)
+  checksum     String
+  status       String   @default("concluido") // "concluido" | "erro"
+  detalhes     String?
+  createdAt    DateTime @default(now())
+
+  @@index([tipo])
+  @@index([createdAt])
+}
+
+model LogAlteracao {
+  id        String   @id @default(cuid())
+  ordemId   String?
+  ordem     OrdemServico? @relation(fields: [ordemId], references: [id], onDelete: Cascade)
+  entidade  String // "ordem" | "cliente" | "configuracao" | "centro"
+  entidadeId String
+  acao      String // "criacao" | "atualizacao" | "status" | "exclusao"
+  descricao String
+  usuario   String?
+  createdAt DateTime @default(now())
+
+  @@index([entidade, entidadeId])
+  @@index([ordemId])
+}
