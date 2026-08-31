@@ -40,6 +40,30 @@ echo "== 2/6 · Empacotando o código-fonte (git archive HEAD) =="
 # e qualquer coisa fora do git nunca vão parar dentro do instalador.
 git -C "$RAIZ" archive HEAD | tar -x -C "$BUILD/app"
 
+# ── Quebras de linha: não é detalhe cosmético ─────────────────────────────
+# O cmd.exe lê .bat por posição de byte e recalcula essa posição a cada
+# goto/call assumindo 2 bytes por quebra de linha. Um .bat com quebra de
+# linha do Unix faz a conta errar e a execução voltar no meio de uma linha —
+# foi assim que o sistema chegou na empresa morrendo com
+# "30 foi inesperado neste momento".
+#
+# O .gitattributes já cuida disso no git; esta conversão é o cinto de
+# segurança para o caso de o arquivo chegar aqui de outro jeito.
+echo "         convertendo .bat/.ps1 para CRLF"
+find "$BUILD/app" \( -name '*.bat' -o -name '*.cmd' -o -name '*.ps1' \) -type f -print0 |
+  while IFS= read -r -d '' arquivo; do
+    sed -i 's/\r$//; s/$/\r/' "$arquivo"
+  done
+
+# Conferência: nenhum arquivo executável do Windows pode sair daqui com LF.
+faltando=$(find "$BUILD/app" \( -name '*.bat' -o -name '*.ps1' \) -type f -exec sh -c \
+  'file "$1" | grep -q CRLF || echo "$1"' _ {} \;)
+if [ -n "$faltando" ]; then
+  echo "ERRO: estes arquivos do Windows ficaram sem CRLF:" >&2
+  echo "$faltando" >&2
+  exit 1
+fi
+
 echo "== 3/6 · Baixando o Node.js portátil para Windows (v$NODE_VERSAO) =="
 CACHE_ZIP="$BUILD/cache/$NODE_ZIP"
 if [ ! -f "$CACHE_ZIP" ]; then

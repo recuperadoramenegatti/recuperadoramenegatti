@@ -48,3 +48,6 @@ prisma/migrations/dev.db*
 # instalador Windows (gerado por installer/windows/gerar-instalador.sh)
 /installer/windows/build/
 /installer/windows/dist/
+
+# log do servidor local
+/logs/

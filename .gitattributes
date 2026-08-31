@@ -1,0 +1,39 @@
+# ═══════════════════════════════════════════════════════════════════════════
+#  Quebras de linha — não é detalhe cosmético aqui
+# ═══════════════════════════════════════════════════════════════════════════
+#
+# O cmd.exe do Windows lê arquivo .bat por POSIÇÃO DE BYTE. A cada `goto` ou
+# `call` ele recalcula essa posição assumindo 2 bytes por quebra de linha
+# (CR+LF). Num arquivo salvo com quebra de linha do Unix (só LF, 1 byte), a
+# conta erra e a execução volta no meio de uma linha — o sintoma clássico é
+# um erro do tipo "X foi inesperado neste momento", ou um laço que some sem
+# explicação.
+#
+# Esse bug já aconteceu neste projeto: os .bat foram escritos em Linux, foram
+# parar no instalador com LF, e o abrir.bat morria em
+# `if %TENTATIVA% LSS 30 goto :aguardar` com "30 foi inesperado neste
+# momento" — porque a variável nunca chegava a ser definida.
+#
+# As regras abaixo garantem que todo arquivo que o Windows executa saia do
+# git com CRLF, em qualquer máquina, sem depender da configuração de quem
+# clonou.
+
+*           text=auto
+
+# Executados pelo Windows: SEMPRE CRLF.
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+*.ps1       text eol=crlf
+
+# Executados por shells Unix: SEMPRE LF (um CR no shebang quebra o script).
+*.sh        text eol=lf
+
+# Binários: nunca converter.
+*.png       binary
+*.jpg       binary
+*.ico       binary
+*.pdf       binary
+*.zip       binary
+*.exe       binary
+*.db        binary
+*.sqlite    binary

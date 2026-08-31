@@ -115,11 +115,18 @@ abrir o navegador. Você não precisa saber se está ligado ou não.
 
 ### O sistema liga sozinho
 
-Depois da instalação, ele sobe junto com o computador e fica esperando. Uma
-janela pequena chamada *Sistema Menegatti* fica na barra de tarefas.
+Depois da instalação, ele sobe junto com o computador e fica rodando em
+segundo plano, sem janela nenhuma na tela. Você não precisa fazer nada: é só
+usar o atalho da área de trabalho quando quiser abrir.
 
-**Não feche essa janela** enquanto estiver usando o sistema — ela é o próprio
-servidor. Se fechar por engano, é só usar o atalho da área de trabalho de novo.
+> Nas versões anteriores o servidor ficava numa janela preta que não podia
+> ser fechada. Isso foi resolvido justamente porque fechar a janela errada
+> derrubava o sistema no meio do trabalho.
+
+### Desligar o sistema
+
+Raramente é preciso — ele não atrapalha nada rodando em segundo plano. Mas se
+quiser desligar, dê dois cliques em **`parar.bat`**, na pasta do sistema.
 
 > **No Windows**, o sistema sobe quando alguém faz login, não quando o
 > computador liga. Foi uma escolha: assim ele roda com a mesma conta que é
@@ -186,6 +193,15 @@ administrador*).
 
 O servidor está parado. Dê dois cliques no atalho **Sistema Menegatti** e
 espere alguns segundos.
+
+### Cliquei no atalho e não abriu nada
+
+O atalho agora mostra o motivo em vez de fechar sozinho: se o sistema não
+subir, aparece uma janela com as últimas mensagens do servidor e o que
+costuma resolver.
+
+Se quiser ver o registro completo, ele fica em **`logs\servidor.log`**, dentro
+da pasta do sistema. Esse arquivo é o que dizer numa conversa de suporte.
 
 ### "A porta 3000 já está em uso"
 
