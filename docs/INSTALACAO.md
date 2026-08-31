@@ -1,14 +1,45 @@
 # Instalação na máquina da empresa
 
 Guia para instalar o sistema no computador da Recuperadora Menegatti. Não é
-preciso saber programar — são três passos.
+preciso saber programar.
 
 O sistema roda **dentro da sua empresa**. Os dados ficam no seu computador,
 não na internet, e não há mensalidade de servidor.
 
 ---
 
-## Antes de começar
+## Windows: instalador de um clique (o mais fácil)
+
+Se o computador da empresa é Windows, este é o caminho mais simples que
+existe — baixar um arquivo e instalar, como qualquer outro programa.
+
+1. Baixe **`MenegattiERP-Setup.exe`** (peça o link de download a quem
+   preparou o sistema para você, ou veja
+   [como gerá-lo você mesmo](#gerar-o-instalador-para-quem-mantém-o-sistema))
+2. Dê **dois cliques** no arquivo baixado
+3. O Windows provavelmente vai mostrar um aviso **"O Windows protegeu o
+   computador"** — isso é esperado, o instalador não tem um certificado pago
+   de editora (custaria uma mensalidade sem necessidade nenhuma para um
+   sistema de uso interno). Clique em **Mais informações** e depois em
+   **Executar assim mesmo**
+4. Siga o assistente: **Avançar → Instalar**. Não precisa mexer em nada —
+   nem instalar Node.js, nem abrir terminal
+5. A instalação leva de 5 a 15 minutos (com internet); ao final, o sistema
+   abre sozinho no navegador
+
+Pronto — o mesmo resultado do passo a passo manual abaixo, sem nenhum dos
+passos manuais. Um atalho **"Sistema Menegatti"** fica na área de trabalho, e
+o sistema passa a iniciar sozinho com o Windows. Para desinstalar, use
+**Configurações → Aplicativos** do Windows como qualquer outro programa.
+
+> Linux ou macOS, ou prefere entender cada passo? Siga o caminho manual
+> abaixo — ele funciona em qualquer sistema.
+
+---
+
+## Caminho manual (Linux, macOS, ou por escolha)
+
+### Antes de começar
 
 Você vai precisar de:
 
@@ -16,9 +47,7 @@ Você vai precisar de:
 - **Internet**, só na hora de instalar (o uso diário funciona sem)
 - Cerca de **20 minutos**, quase todos de espera
 
----
-
-## Passo 1 — Instalar o Node.js
+### Passo 1 — Instalar o Node.js
 
 O sistema é construído sobre o Node.js, um programa gratuito da comunidade de
 software livre. Ele precisa estar no computador antes.
@@ -34,9 +63,9 @@ Se o computador pedir para reiniciar, reinicie.
 
 ---
 
-## Passo 2 — Instalar o sistema
+### Passo 2 — Instalar o sistema
 
-### Windows
+#### Windows
 
 1. Copie a pasta do sistema para o computador — por exemplo, para
    `C:\Menegatti`
@@ -46,7 +75,7 @@ Se o computador pedir para reiniciar, reinicie.
    Deixe trabalhando; leva de 5 a 15 minutos
 5. Ao terminar, o sistema abre sozinho no navegador
 
-### Linux ou macOS
+#### Linux ou macOS
 
 Abra o terminal na pasta do sistema e rode:
 
@@ -56,7 +85,7 @@ Abra o terminal na pasta do sistema e rode:
 
 ---
 
-## Passo 3 — Primeiro acesso
+### Passo 3 — Primeiro acesso
 
 O sistema abre no navegador. Entre com:
 
@@ -224,3 +253,38 @@ feita com cuidado, ou o serviço sobe mas não consegue escrever no banco.
 
 Copiar o arquivo `prisma/menegatti.db` copia o sistema inteiro. É exatamente
 isso que o backup faz, com verificação de integridade por cima.
+
+---
+
+## Gerar o instalador (para quem mantém o sistema)
+
+Esta parte é para quem edita o código, não para quem só vai usar o sistema.
+
+O `MenegattiERP-Setup.exe` citado lá em cima não é um arquivo comum do
+repositório — ele é **gerado** a partir do código, já com um Node.js
+portátil embutido, então quem for instalar não precisa ter Node.js no
+computador. Para gerar (ou atualizar) esse arquivo:
+
+```bash
+# numa máquina Linux com NSIS instalado (sudo apt install nsis)
+./installer/windows/gerar-instalador.sh
+```
+
+O resultado sai em `installer/windows/dist/MenegattiERP-Setup.exe`. O script
+baixa o Node.js oficial do site nodejs.org e confere o checksum antes de
+empacotar — nada é baixado de fonte não verificada.
+
+### Deixar num link permanente
+
+Para que qualquer pessoa baixe pelo navegador, sem precisar pedir o arquivo:
+
+1. No GitHub, abra o repositório → **Releases** → **Draft a new release**
+2. Em *Tag*, escreva algo como `v1.0.0`
+3. Arraste o arquivo `MenegattiERP-Setup.exe` para a caixa de anexos
+4. Clique em **Publish release**
+
+O link da página do release (algo como
+`github.com/.../releases/latest`) é o "link de download" — pode ser
+compartilhado, colocado num favorito do navegador da empresa, ou linkado
+direto no README. Não precisa programar nada para isso, é só arrastar o
+arquivo na página do GitHub.
