@@ -1,12 +1,31 @@
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { FormularioLogin } from '@/app/(auth)/login/formulario-login';
 import { LogoCompleto } from '@/components/comum/logo';
 import { getConfig } from '@/lib/calculos';
+import { estadoDoBanco } from '@/lib/estado-banco';
 
 export const metadata: Metadata = { title: 'Entrar' };
 
+/**
+ * Renderizada a cada acesso, nunca congelada no build.
+ *
+ * Esta tela lê o nome e o logo da empresa no banco e checa se o banco está
+ * de pé. Se fosse pré-renderizada, o resultado dessa checagem ficaria gravado
+ * no momento da publicação: um sistema publicado antes de conectar o banco
+ * continuaria mandando todo mundo para a tela de configuração mesmo depois
+ * de configurado — e trocar o logo exigiria publicar de novo.
+ */
+export const dynamic = 'force-dynamic';
+
 export default async function PaginaLogin(): Promise<React.JSX.Element> {
+  // Esta tela lê o nome e o logo da empresa no banco. Sem banco, ela quebraria
+  // com um erro técnico — e o login não funcionaria de qualquer forma. Mandar
+  // para a tela de configuração diz o que falta em vez de mostrar um erro.
+  const estado = await estadoDoBanco();
+  if (!estado.pronto) redirect('/configurar');
+
   const logo = await getConfig('empresaLogo');
   const nomeEmpresa = await getConfig('empresaNome', 'Recuperadora Menegatti');
 
