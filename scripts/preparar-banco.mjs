@@ -27,6 +27,7 @@
  *   node scripts/preparar-banco.mjs --tolerante  (build)
  */
 import { spawnSync } from 'node:child_process';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -40,12 +41,83 @@ const FIM = '\x1b[0m';
 
 const tolerante = process.argv.includes('--tolerante');
 
+/**
+ * Carrega o .env, como o Prisma e o Next fazem por conta própria.
+ *
+ * Um script Node comum NÃO lê .env sozinho. Sem isto, a checagem abaixo
+ * olharia para um `process.env.DATABASE_URL` vazio mesmo com o .env
+ * preenchido, e a instalação na máquina da empresa pararia dizendo que
+ * falta configurar o banco — com o banco configurado.
+ *
+ * Variáveis já presentes no ambiente têm prioridade sobre o arquivo, que é
+ * como o dotenv se comporta: na Vercel, o painel manda; na máquina da
+ * empresa, o arquivo.
+ */
+function carregarEnv() {
+  const caminho = path.join(RAIZ, '.env');
+  if (!fs.existsSync(caminho)) return;
+
+  for (const linha of fs.readFileSync(caminho, 'utf8').split(/\r?\n/)) {
+    const limpa = linha.trim();
+    if (limpa === '' || limpa.startsWith('#')) continue;
+
+    const separador = limpa.indexOf('=');
+    if (separador <= 0) continue;
+
+    const chave = limpa.slice(0, separador).trim();
+    if (chave in process.env) continue; // ambiente vence o arquivo
+
+    let valor = limpa.slice(separador + 1).trim();
+    // Tira as aspas externas, se houver: DATABASE_URL="file:./x.db"
+    if (
+      (valor.startsWith('"') && valor.endsWith('"') && valor.length >= 2) ||
+      (valor.startsWith("'") && valor.endsWith("'") && valor.length >= 2)
+    ) {
+      valor = valor.slice(1, -1);
+    }
+
+    process.env[chave] = valor;
+  }
+}
+
+carregarEnv();
+
+/**
+ * Chama o Prisma que está instalado nesta pasta, pelo Node, direto.
+ *
+ * Não é `npx` de propósito. O PATH de um script Node não inclui
+ * `node_modules/.bin`, então o `npx` não acharia o Prisma local e cairia no
+ * seu comportamento de último recurso: BAIXAR o pacote da internet. Num
+ * build de servidor isso significa depender da rede num passo que não
+ * deveria depender, e ainda arriscar rodar uma versão do CLI diferente da
+ * que gerou o client — duas formas de o build falhar por motivo nenhum.
+ *
+ * Chamando `node node_modules/prisma/build/index.js` não há busca em PATH,
+ * não há download e a versão é exatamente a do package-lock.
+ */
 function rodarPrisma(args) {
-  const resultado = spawnSync('npx', ['prisma', ...args], {
+  const cli = path.join(RAIZ, 'node_modules', 'prisma', 'build', 'index.js');
+
+  if (!fs.existsSync(cli)) {
+    return {
+      ok: false,
+      motivo: 'o Prisma não está instalado nesta pasta (node_modules incompleto)',
+    };
+  }
+
+  // `prisma db seed` executa o comando configurado no package.json —
+  // "tsx prisma/seed.ts" — procurando `tsx` no PATH. Como o PATH de um
+  // script Node não inclui node_modules/.bin, sem isto o seed morre com
+  // "spawn tsx ENOENT" e a instalação para no passo do banco.
+  const binLocal = path.join(RAIZ, 'node_modules', '.bin');
+  const PATH = [binLocal, process.env.PATH ?? ''].join(path.delimiter);
+
+  const resultado = spawnSync(process.execPath, [cli, ...args], {
     cwd: RAIZ,
     stdio: 'inherit',
-    shell: process.platform === 'win32',
+    env: { ...process.env, PATH, Path: PATH },
   });
+
   if (resultado.error) return { ok: false, motivo: resultado.error.message };
   if (resultado.status !== 0) return { ok: false, motivo: `código ${resultado.status}` };
   return { ok: true };
