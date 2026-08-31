@@ -2,6 +2,12 @@
 setlocal
 cd /d "%~dp0"
 
+REM  Instalador baixado pronto (MenegattiERP-Setup.exe) traz um Node.js
+REM  portatil em runtime\node — nao exige instalar Node.js separadamente.
+REM  Quando essa pasta existe, ela entra na frente do PATH e os passos
+REM  abaixo funcionam sem nenhuma mudanca.
+if exist "%~dp0runtime\node\node.exe" set "PATH=%~dp0runtime\node;%PATH%"
+
 echo.
 echo  ============================================================
 echo    RECUPERADORA MENEGATTI

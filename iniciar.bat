@@ -7,6 +7,8 @@ setlocal
 cd /d "%~dp0"
 title Sistema Menegatti
 
+if exist "%~dp0runtime\node\node.exe" set "PATH=%~dp0runtime\node;%PATH%"
+
 where node >nul 2>nul
 if errorlevel 1 (
   echo.
