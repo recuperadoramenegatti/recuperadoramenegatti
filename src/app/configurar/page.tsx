@@ -17,6 +17,12 @@ interface Explicacao {
   titulo: string;
   resumo: string;
   passos: string[];
+  /**
+   * Caminho B, para quando o caminho A esbarra em algo fora do nosso alcance.
+   * O plano gratuito da Vercel limita quantos bancos a conta pode ter, e quem
+   * bate nesse limite fica sem saída se a tela só souber explicar um jeito.
+   */
+  alternativa?: { titulo: string; passos: string[] };
 }
 
 const EXPLICACOES: Record<MotivoIndisponivel, Explicacao> = {
@@ -33,6 +39,17 @@ const EXPLICACOES: Record<MotivoIndisponivel, Explicacao> = {
       'Nessa mesma variável, deixe as TRÊS caixas marcadas: Production, Preview e Development. É o engano mais comum — marcada só em Production, o endereço da versão de teste continua caindo nesta tela.',
       'Volte em Deployments e clique nos três pontinhos do deploy mais recente → "Redeploy". Aguarde terminar e recarregue esta página.',
     ],
+    alternativa: {
+      titulo: 'Se a Vercel disser que você atingiu o limite de bancos',
+      passos: [
+        'O plano gratuito da Vercel permite poucos bancos. Se ela recusar, crie o banco fora dela — o sistema não sabe a diferença, e continua sendo de graça.',
+        'Entre em neon.com e crie uma conta (dá para entrar com o GitHub, sem cadastrar cartão).',
+        'Crie um projeto. Na tela seguinte aparece a "Connection string": um texto que começa com postgresql://. Copie inteiro. Se houver a opção "Pooled connection", prefira ela.',
+        'Volte na Vercel, em Settings → Environment Variables. Crie a variável DATABASE_URL e cole esse texto no valor.',
+        'Marque as TRÊS caixas: Production, Preview e Development. Salve.',
+        'Em Deployments, três pontinhos do deploy mais recente → "Redeploy". Ao terminar, recarregue esta página.',
+      ],
+    },
   },
   url_incompativel: {
     titulo: 'O banco configurado não serve para este servidor',
@@ -121,6 +138,27 @@ export default async function ConfigurarPage() {
             </li>
           ))}
         </ol>
+
+        {explicacao.alternativa ? (
+          <div className="mt-8 rounded-lg border border-dashed border-[var(--borda-1)] bg-[var(--superficie-2)] p-5">
+            <h2 className="text-sm font-semibold text-foreground">
+              {explicacao.alternativa.titulo}
+            </h2>
+            <ol className="mt-3 space-y-2">
+              {explicacao.alternativa.passos.map((passo, indice) => (
+                <li key={passo} className="flex gap-3 text-sm text-muted-foreground">
+                  <span
+                    aria-hidden
+                    className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--superficie-3)] text-xs font-semibold"
+                  >
+                    {indice + 1}
+                  </span>
+                  <span className="leading-relaxed">{passo}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ) : null}
 
         <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-[var(--borda-1)] pt-6">
           <a

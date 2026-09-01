@@ -51,6 +51,26 @@ projeto já criado):
 
 Isso cria automaticamente uma variável de ambiente com a conexão do banco.
 
+### Se a Vercel recusar: "você atingiu o limite de bancos"
+
+O plano gratuito da Vercel permite poucos bancos por conta. Se ela recusar a
+criação, **crie o banco fora dela**. O sistema não sabe a diferença — para ele
+é uma conexão Postgres como qualquer outra — e continua sendo de graça.
+
+1. Entre em <https://neon.com> e crie uma conta (dá para entrar com o GitHub,
+   sem cadastrar cartão)
+2. Crie um projeto. A tela seguinte mostra a **Connection string**: um texto
+   que começa com `postgresql://`. Copie inteiro
+   - Se houver a opção **Pooled connection**, prefira ela
+3. Na Vercel, vá em **Settings → Environment Variables**
+4. Crie a variável `DATABASE_URL` e cole esse texto no valor
+5. Marque as **três** caixas: Production, Preview e Development
+6. Em **Deployments**, três pontinhos do deploy mais recente → **Redeploy**
+
+Pronto — o resto do guia segue igual. Serve qualquer Postgres hospedado
+(Supabase, Railway, Aiven, um servidor da própria empresa); o Neon é só o
+mais simples de abrir sem cartão.
+
 ### Confira o nome da variável
 
 O sistema espera a variável se chamar exatamente **`DATABASE_URL`**. Depois
