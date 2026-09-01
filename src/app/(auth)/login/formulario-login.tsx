@@ -28,6 +28,18 @@ export function FormularioLogin({ className }: { className?: string }): React.JS
   const [mostrarSenha, setMostrarSenha] = React.useState(false);
   const [erroGeral, setErroGeral] = React.useState<string | null>(null);
 
+  /**
+   * Quantas vezes o login falhou nesta tela.
+   *
+   * O servidor bloqueia por 15 minutos depois de 5 tentativas erradas, mas
+   * essa informação não chega até aqui: o NextAuth transforma o bloqueio no
+   * mesmo erro genérico de credencial recusada. Sem este contador, quem erra
+   * a senha algumas vezes passa a receber "usuário ou senha inválidos" mesmo
+   * depois de digitar a senha CERTA — e não tem como saber que é só esperar.
+   */
+  const [falhas, setFalhas] = React.useState(0);
+  const TENTATIVAS_ATE_BLOQUEIO = 5;
+
   const {
     register,
     handleSubmit,
@@ -59,15 +71,25 @@ export function FormularioLogin({ className }: { className?: string }): React.JS
         const credencialRecusada =
           !resultado?.error || resultado.error === 'CredentialsSignin';
 
-        const mensagem = credencialRecusada
-          ? 'Usuário ou senha inválidos.'
-          : 'O sistema não conseguiu concluir o login por um problema de configuração — ' +
-            'não é a sua senha. Abra a página /configurar para ver o que falta.';
+        const falhasAgora = falhas + 1;
+        setFalhas(falhasAgora);
+
+        const mensagem = !credencialRecusada
+          ? 'O sistema não conseguiu concluir o login por um problema de configuração — ' +
+            'não é a sua senha. Abra a página /configurar para ver o que falta.'
+          : falhasAgora >= TENTATIVAS_ATE_BLOQUEIO
+            ? 'Usuário ou senha inválidos. Atenção: depois de ' +
+              `${TENTATIVAS_ATE_BLOQUEIO} tentativas erradas o sistema bloqueia o acesso por ` +
+              '15 minutos. Se você tem certeza da senha, espere 15 minutos antes de tentar ' +
+              'de novo — insistir agora só renova o bloqueio.'
+            : 'Usuário ou senha inválidos.';
 
         setErroGeral(mensagem);
         toast.error(mensagem);
         return;
       }
+
+      setFalhas(0);
 
       toast.success('Bem-vindo de volta!');
       router.push(destino);
