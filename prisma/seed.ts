@@ -18,6 +18,7 @@ import {
 } from '../src/lib/constants';
 import type { ParametrosBase } from '../src/types';
 import { garantirCodigo } from '../src/lib/recuperacao';
+import { CHAVE_SENHA_DEFINIDA } from '../src/lib/senha-definida';
 
 const prisma = new PrismaClient();
 
@@ -37,7 +38,20 @@ async function main(): Promise<void> {
   // de usada, senão todo deploy futuro desfaz a senha que o dono escolher.
   const senhaHash = await bcrypt.hash(CREDENCIAL_INICIAL.senha, 12);
   const email = CREDENCIAL_INICIAL.email.trim().toLowerCase();
-  const redefinir = Boolean(process.env.REDEFINIR_ACESSO?.trim());
+
+  // A senha só é preservada quando o DONO a trocou pela tela do sistema —
+  // e isso deixa uma marca no banco (CHAVE_SENHA_DEFINIDA). Enquanto essa
+  // marca não existe, a senha guardada é a que o seed pôs lá, e realinhá-la
+  // com a configuração não perde nada de ninguém.
+  //
+  // É o que impede o beco sem saída: numa instalação onde o acesso se perdeu
+  // e ninguém nunca trocou a senha conscientemente, publicar de novo devolve
+  // o acesso. Quem trocou a senha de propósito nunca a vê ser desfeita.
+  const marca = await prisma.configuracao.findUnique({
+    where: { chave: CHAVE_SENHA_DEFINIDA },
+  });
+  const donoDefiniuSenha = marca?.valor === 'true';
+  const redefinir = !donoDefiniuSenha || Boolean(process.env.REDEFINIR_ACESSO?.trim());
 
   // Procura por qualquer usuário, não pelo e-mail configurado: se o cadastro
   // atual tiver outro e-mail (uma instalação antiga com "admin", por
@@ -54,15 +68,12 @@ async function main(): Promise<void> {
       where: { id: existente.id },
       data: { email, password: senhaHash, name: CREDENCIAL_INICIAL.nome, role: 'admin' },
     });
-    console.log(`  ✓ Acesso REDEFINIDO: usuário "${atualizado.email}", senha reconfigurada.`);
-    console.log('    Remova a variável REDEFINIR_ACESSO agora — enquanto ela existir,');
-    console.log('    todo novo deploy vai desfazer a senha que você escolher.');
+    console.log(`  ✓ Acesso garantido: usuário "${atualizado.email}", senha padrão.`);
+    console.log('    (A senha só deixa de ser realinhada quando você trocá-la pela');
+    console.log('     tela do sistema — a partir daí ela é sua e ninguém a desfaz.)');
   } else {
-    console.log(`  ✓ Usuário administrador já existe: ${existente.email} (mantido como está)`);
-    if (existente.email !== email) {
-      console.log(`    Atenção: o e-mail configurado é "${email}", mas o cadastro tem`);
-      console.log(`    "${existente.email}". Use REDEFINIR_ACESSO=1 para alinhar os dois.`);
-    }
+    console.log(`  ✓ Usuário administrador: ${existente.email}`);
+    console.log('    Senha preservada: foi você quem a definiu pela tela do sistema.');
   }
 
   // ── Parâmetros financeiros ─────────────────────────────────────────────
