@@ -13,6 +13,7 @@
  */
 import bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
+import { CREDENCIAL_INICIAL } from '../src/lib/constants';
 import {
   CHAVE_CODIGO,
   gerarCodigo,
@@ -140,7 +141,7 @@ async function main(): Promise<void> {
     'a senha nova realmente entra',
   );
   conferir(
-    !(await bcrypt.compare('menegatti2024', usuarioDepois?.password ?? '')),
+    !(await bcrypt.compare(CREDENCIAL_INICIAL.senha, usuarioDepois?.password ?? '')),
     'a senha antiga deixou de valer',
   );
 

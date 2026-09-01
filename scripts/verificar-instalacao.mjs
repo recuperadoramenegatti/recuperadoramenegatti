@@ -8,6 +8,7 @@
  * Uso: node scripts/verificar-instalacao.mjs [urlBase]
  */
 import { chromium } from 'playwright';
+import { CREDENCIAL_INICIAL } from './credencial-inicial.mjs';
 const BASE = process.argv[2] ?? 'http://localhost:3000';
 let falhas = 0;
 const checar = (r, ok, d = '') => { if (!ok) falhas++; console.log(`  ${ok ? '✓' : '✗'} ${r}${d ? ` — ${d}` : ''}`); };
@@ -22,8 +23,8 @@ console.log('\n── Primeiro acesso, como o dono faria ──');
 await p.goto(`${BASE}/`, { waitUntil: 'networkidle' });
 checar('a raiz leva ao login', p.url().includes('/login'), p.url().replace(BASE, ''));
 
-await p.fill('#email', 'admin');
-await p.fill('#password', 'menegatti2024');
+await p.fill('#email', CREDENCIAL_INICIAL.email);
+await p.fill('#password', CREDENCIAL_INICIAL.senha);
 await p.click('button[type="submit"]');
 await p.waitForURL('**/dashboard', { timeout: 30000 });
 checar('login com a senha inicial funciona', true);

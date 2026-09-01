@@ -17,6 +17,7 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { CREDENCIAL_INICIAL } from './credencial-inicial.mjs';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -169,8 +170,8 @@ async function main() {
   console.log(`    ${VERDE}${NEGRITO}INSTALACAO CONCLUIDA${FIM}`);
   console.log('  ============================================================');
   console.log();
-  console.log('    Usuario: admin');
-  console.log('    Senha:   menegatti2024');
+  console.log(`    Usuario: ${CREDENCIAL_INICIAL.email}`);
+  console.log(`    Senha:   ${CREDENCIAL_INICIAL.senha}`);
   console.log();
   console.log(`    ${AMARELO}TROQUE A SENHA no primeiro acesso, em Configuracoes.${FIM}`);
   console.log();
