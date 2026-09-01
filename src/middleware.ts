@@ -12,7 +12,12 @@ import { NextResponse, type NextRequest } from 'next/server';
  * banco ainda não foi conectado, e nesse estado não há como validar login
  * nenhum. Ela não mostra dado algum da empresa — só o que falta configurar.
  */
-const ROTAS_PUBLICAS = ['/login', '/configurar'];
+/**
+ * `/recuperar` também é pública, e tem de ser: quem esqueceu a senha não tem
+ * como se autenticar antes de recuperá-la. A proteção dela não é o login, é
+ * o código de recuperação — conferido no servidor, com freio contra chute.
+ */
+const ROTAS_PUBLICAS = ['/login', '/configurar', '/recuperar'];
 
 export function middleware(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;

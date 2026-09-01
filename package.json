@@ -16,6 +16,7 @@
     "smoke": "tsx scripts/smoke-os.ts",
     "smoke:abrir": "node scripts/smoke-abrir.mjs",
     "smoke:backup": "tsx scripts/smoke-backup.ts",
+    "smoke:recuperacao": "tsx scripts/smoke-recuperacao.ts",
     "smoke:tarefas": "tsx scripts/smoke-tarefas.ts",
     "start": "next start",
     "start:rede": "next start -H 0.0.0.0",

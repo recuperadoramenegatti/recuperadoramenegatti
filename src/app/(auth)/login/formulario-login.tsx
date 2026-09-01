@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -165,6 +166,15 @@ export function FormularioLogin({ className }: { className?: string }): React.JS
         {!isSubmitting ? <LogIn className="h-4 w-4" /> : null}
         Entrar
       </Button>
+
+      <p className="pt-1 text-center">
+        <Link
+          href="/recuperar"
+          className="text-sm text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
+        >
+          Esqueci minha senha
+        </Link>
+      </p>
     </form>
   );
 }
