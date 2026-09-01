@@ -17,6 +17,7 @@ import { prisma } from '@/lib/prisma';
 import { extrairMensagemErro } from '@/lib/utils';
 
 export type MotivoIndisponivel =
+  | 'sem_segredo'
   | 'sem_url'
   | 'url_incompativel'
   | 'sem_conexao'
@@ -46,6 +47,31 @@ interface Cache {
 
 const globalParaEstado = globalThis as unknown as { __estadoBancoMenegatti?: Cache };
 
+/**
+ * O segredo de sessão está configurado?
+ *
+ * Sem ele o NextAuth não consegue assinar a sessão e toda tentativa de login
+ * falha — mas o formulário mostrava "Usuário ou senha inválidos", porque ele
+ * trata qualquer falha do mesmo jeito. O dono ficava digitando a senha certa
+ * e recebendo "senha errada", sem nenhuma pista do que faltava.
+ *
+ * Checar aqui é barato (só lê variável de ambiente) e transforma esse beco
+ * sem saída numa tela que diz o que fazer.
+ */
+function segredoConfigurado(): EstadoBanco | null {
+  const segredo = (process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET)?.trim();
+
+  if (!segredo) {
+    return {
+      pronto: false,
+      motivo: 'sem_segredo',
+      detalhe: 'Nem NEXTAUTH_SECRET nem AUTH_SECRET estão definidas neste ambiente.',
+    };
+  }
+
+  return null;
+}
+
 function urlConfigurada(): EstadoBanco | null {
   const url = process.env.DATABASE_URL?.trim();
 
@@ -73,6 +99,11 @@ function urlConfigurada(): EstadoBanco | null {
 }
 
 async function diagnosticar(): Promise<EstadoBanco> {
+  // Antes do banco: sem segredo de sessão não há login possível, e essa
+  // falha se disfarçava de "senha errada".
+  const problemaDeSegredo = segredoConfigurado();
+  if (problemaDeSegredo) return problemaDeSegredo;
+
   const problemaDeUrl = urlConfigurada();
   if (problemaDeUrl) return problemaDeUrl;
 

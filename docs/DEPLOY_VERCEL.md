@@ -149,6 +149,23 @@ variável de ambiente.
 
 ## Se algo der errado
 
+- **"No Output Directory named 'public' found after the Build completed"**:
+  a Vercel está tratando o projeto como site estático em vez de Next.js. O
+  build funcionou (a mensagem aparece *depois* de "Compiled successfully");
+  ela só foi procurar a saída no lugar errado.
+
+  O repositório já traz um `vercel.json` declarando `"framework": "nextjs"`,
+  o que normalmente resolve. Se ainda assim aparecer, ajuste pelo painel:
+  **Settings → Build and Deployment**, coloque **Framework Preset** em
+  **Next.js** e desligue qualquer "Override" em **Output Directory**. Depois
+  clique em **Redeploy**.
+
+- **O deploy publica uma versão antiga do sistema**: confira qual branch está
+  em **Settings → Git → Production Branch**. Ela precisa apontar para a
+  branch onde o código está de fato. Se apontar para uma branch parada, todo
+  deploy vai publicar aquele código antigo, por mais que você atualize o
+  resto.
+
 - **Build falhou dizendo que não encontrou `DATABASE_URL`**: revise o Passo 2
   — a variável precisa se chamar exatamente `DATABASE_URL` e estar marcada
   para o ambiente **Production**.

@@ -17,6 +17,7 @@ import {
   CREDENCIAL_INICIAL,
 } from '../src/lib/constants';
 import type { ParametrosBase } from '../src/types';
+import { garantirCodigo } from '../src/lib/recuperacao';
 
 const prisma = new PrismaClient();
 
@@ -127,11 +128,29 @@ async function main(): Promise<void> {
     );
   }
 
+  // ── Código de recuperação ──────────────────────────────────────────────
+  // Só é criado se ainda não existir: trocar o código de quem já anotou o
+  // dele transformaria o papel guardado na gaveta em papel inútil.
+  const codigoNovo = await garantirCodigo();
+
   console.log('✓ Seed concluído.');
   console.log(
     `  Acesse com usuário "${CREDENCIAL_INICIAL.email}" e senha "${CREDENCIAL_INICIAL.senha}".`,
   );
   console.log('  Troque a senha em /configuracoes → Empresa.\n');
+
+  if (codigoNovo) {
+    console.log('  ┌──────────────────────────────────────────────────────┐');
+    console.log('  │  CÓDIGO DE RECUPERAÇÃO DE SENHA — ANOTE ESTE CÓDIGO  │');
+    console.log('  ├──────────────────────────────────────────────────────┤');
+    console.log(`  │            ${codigoNovo}                 │`);
+    console.log('  └──────────────────────────────────────────────────────┘');
+    console.log('    É com ele que se recupera o acesso caso a senha seja');
+    console.log('    esquecida. Guarde fora do computador — num papel, na');
+    console.log('    carteira, onde ficam os documentos da empresa.');
+    console.log('    Esta é a única vez que ele aparece: o banco guarda só');
+    console.log('    uma marca dele, não o código.\n');
+  }
 }
 
 main()

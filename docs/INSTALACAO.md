@@ -214,7 +214,36 @@ PORT=3001 ./iniciar.sh
 
 ### Esqueci a senha
 
-Na pasta do sistema, abra o terminal e rode:
+Na tela de entrada, clique em **"Esqueci minha senha"**. O sistema pede o
+**código de recuperação** e deixa você escolher uma senha nova.
+
+**Onde está esse código?** Ele apareceu uma única vez, dentro de uma moldura,
+no final da instalação — é aquele no formato `ABCD-EFGH-JKLM-NPQR`. Ele foi
+feito para ser anotado num papel e guardado junto com os documentos da
+empresa. Pode digitar com ou sem os hífens, em maiúsculas ou minúsculas.
+
+Cada código serve **uma vez só**: ao usá-lo, a tela mostra um código novo
+para você anotar no lugar do antigo.
+
+#### E se o papel com o código se perdeu?
+
+Configure um **código mestre**, que fica sob controle de quem administra o
+sistema e não se perde:
+
+- **Na máquina da empresa**: abra o arquivo `.env` na pasta do sistema e
+  acrescente uma linha como
+  `CODIGO_RECUPERACAO="frase-longa-que-so-a-direcao-conhece-2026"`.
+  Depois desligue e ligue o sistema.
+- **Na Vercel**: crie a variável `CODIGO_RECUPERACAO` em
+  *Settings → Environment Variables* e clique em **Redeploy**.
+
+Esse código passa a funcionar em "Esqueci minha senha" como qualquer outro —
+e, por não ficar guardado no banco, continua valendo mesmo depois de usado.
+
+#### Último recurso
+
+Se nem o papel nem o código mestre existirem, ainda dá para redefinir pelo
+banco. Na pasta do sistema:
 
 ```bash
 npm run db:studio

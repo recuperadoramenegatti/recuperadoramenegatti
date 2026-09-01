@@ -20,6 +20,22 @@ interface Explicacao {
 }
 
 const EXPLICACOES: Record<MotivoIndisponivel, Explicacao> = {
+  sem_segredo: {
+    titulo: 'Falta o segredo de sessão',
+    resumo:
+      'O sistema precisa de um texto secreto para manter você conectado depois ' +
+      'do login. Sem ele, o login não funciona — e, pior, a tela de entrada ' +
+      'responde "usuário ou senha inválidos" mesmo com a senha certa. Não é a ' +
+      'sua senha: é esta configuração que falta.',
+    passos: [
+      'Gere um texto aleatório: aperte F12 no navegador, vá na aba "Console", cole crypto.randomUUID() + crypto.randomUUID() e aperte Enter. Copie o resultado (sem as aspas).',
+      'No painel da Vercel, vá em Settings → Environment Variables.',
+      'Crie a variável NEXTAUTH_SECRET com esse texto colado.',
+      'Crie a variável AUTH_SECRET com exatamente o mesmo texto.',
+      'Crie a variável NEXTAUTH_URL com o endereço deste site (o https://...vercel.app que está na barra do navegador, sem barra no final).',
+      'Vá em Deployments e clique em "Redeploy" no deploy mais recente.',
+    ],
+  },
   sem_url: {
     titulo: 'Falta conectar um banco de dados',
     resumo:
