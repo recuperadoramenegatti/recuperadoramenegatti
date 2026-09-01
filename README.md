@@ -113,17 +113,26 @@ alternativas estão em [docs/INSTALACAO.md](docs/INSTALACAO.md).
 
 ## Primeiro acesso
 
-| Campo   | Valor            |
-| ------- | ---------------- |
-| Usuário | `admin`          |
-| Senha   | `menegatti2024`  |
+| Campo   | Valor              |
+| ------- | ------------------ |
+| Usuário | `Menegatti`        |
+| Senha   | `Menegatti26fin`   |
 
-**Troque a senha imediatamente** em *Configurações → Empresa → Credenciais de
-acesso*. Ela é a única coisa entre o computador e todos os dados financeiros da
-empresa.
+**Troque a senha** em *Configurações → Empresa → Credenciais de acesso*. Ela é
+a única coisa entre o computador e todos os dados financeiros da empresa.
 
-A sessão dura 30 dias. Após 5 tentativas de login erradas, o usuário fica
-bloqueado por 15 minutos.
+A partir do momento em que você trocar a senha por essa tela, ela é sua:
+nenhuma instalação ou publicação futura a desfaz. Enquanto ainda for a senha
+de fábrica acima, cada publicação a realinha — é a rede de segurança que
+impede ficar trancado do lado de fora.
+
+Esqueceu? **Esqueci minha senha**, na tela de login, devolve o acesso pelo
+código de recuperação (mostrado no primeiro acesso e em *Configurações →
+Segurança*).
+
+A sessão dura 30 dias. Errar a senha não bloqueia a conta: cada erro seguido
+só faz a resposta demorar um pouco mais, até 5 segundos — o suficiente para
+travar quem tenta adivinhar, sem trancar quem se atrapalhou.
 
 ---
 

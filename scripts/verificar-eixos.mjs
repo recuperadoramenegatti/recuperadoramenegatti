@@ -8,6 +8,7 @@
  * Uso: node scripts/verificar-eixos.mjs [urlBase]
  */
 import { chromium } from 'playwright';
+import { CREDENCIAL_INICIAL } from './credencial-inicial.mjs';
 
 const BASE = process.argv[2] ?? 'http://localhost:3000';
 const ROTAS = [
@@ -24,8 +25,8 @@ const ctx = await nav.newContext({ viewport: { width: 1440, height: 950 } });
 const p = await ctx.newPage();
 
 await p.goto(`${BASE}/login`, { waitUntil: 'networkidle' });
-await p.fill('#email', 'admin');
-await p.fill('#password', 'menegatti2024');
+await p.fill('#email', CREDENCIAL_INICIAL.email);
+await p.fill('#password', CREDENCIAL_INICIAL.senha);
 await p.click('button[type="submit"]');
 await p.waitForURL('**/dashboard', { timeout: 30000 });
 

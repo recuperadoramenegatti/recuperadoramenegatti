@@ -66,38 +66,28 @@ de conectar o banco:
 
 ---
 
-## Passo 3 — Criar o segredo de login
+## Passo 3 — Segredo de login (não precisa fazer nada)
 
-O sistema precisa de um texto aleatório para proteger as sessões de login.
-Sem abrir nenhum programa:
+O sistema precisa de um texto secreto para assinar as sessões de login. Ele
+**se vira sozinho**: quando não há nada configurado, deriva o segredo da
+própria conexão do banco. Não há passo a cumprir aqui, e não há como ficar
+trancado do lado de fora por causa disso.
 
-1. Abra qualquer página no navegador
-2. Aperte **F12** (ou clique com o botão direito → **Inspecionar**) para
-   abrir as Ferramentas do Desenvolvedor
-3. Clique na aba **Console**
-4. Cole isto e aperte Enter:
-   ```js
-   crypto.randomUUID() + crypto.randomUUID()
-   ```
-5. Copie o texto que aparecer (algo como
-   `"a1b2c3d4-...-e5f6g7h8-..."`, sem as aspas)
+Se você preferir definir o seu, crie em **Settings → Environment Variables**
+duas variáveis com o mesmo valor — `NEXTAUTH_SECRET` e `AUTH_SECRET` — e
+marque as três caixas (Production, Preview, Development). É opcional.
 
-Em **Settings → Environment Variables**, crie duas variáveis com esse mesmo
-valor colado:
+`NEXTAUTH_URL` também não é necessária: o sistema reconhece sozinho o
+endereço em que está publicado.
 
-| Nome              | Valor                          |
-| ----------------- | ------------------------------- |
-| `NEXTAUTH_SECRET`  | o texto copiado acima            |
-| `AUTH_SECRET`      | o mesmo texto copiado acima      |
+### Código de recuperação (opcional, mas recomendado)
 
-E mais uma, com o endereço que a própria Vercel deu ao projeto (aparece no
-topo da página do projeto, algo como `https://menegatti-erp.vercel.app`):
-
-| Nome            | Valor                                 |
-| --------------- | -------------------------------------- |
-| `NEXTAUTH_URL`  | o endereço `https://...vercel.app`     |
+Crie a variável `CODIGO_RECUPERACAO` com uma frase que só você saiba (pelo
+menos 8 caracteres). Com ela, a tela **Esqueci minha senha** sempre devolve o
+acesso, mesmo que o papel com o código guardado se perca.
 
 ---
+
 
 ## Passo 4 — Deploy
 
@@ -114,13 +104,22 @@ Ao final, clique em **Visit** para abrir o sistema.
 
 ## Primeiro acesso
 
-| Campo   | Valor           |
-| ------- | --------------- |
-| Usuário | `admin`         |
-| Senha   | `menegatti2024` |
+| Campo   | Valor              |
+| ------- | ------------------ |
+| Usuário | `Menegatti`        |
+| Senha   | `Menegatti26fin`   |
 
-**Troque a senha imediatamente** em *Configurações → Empresa → Credenciais de
-acesso*.
+**Troque a senha** em *Configurações → Empresa → Credenciais de acesso*. A
+partir do momento em que você a trocar por essa tela, nenhuma publicação
+futura desfaz a sua senha — ela é sua.
+
+Enquanto a senha ainda for a do instalador, cada publicação realinha o acesso
+com as credenciais acima. É a rede de segurança que impede ficar trancado do
+lado de fora.
+
+Esqueceu a senha? Clique em **Esqueci minha senha** na tela de login e use o
+código de recuperação (aquele que apareceu no primeiro acesso) ou o valor de
+`CODIGO_RECUPERACAO`, se você tiver criado essa variável.
 
 ---
 
@@ -166,11 +165,15 @@ variável de ambiente.
   deploy vai publicar aquele código antigo, por mais que você atualize o
   resto.
 
-- **Build falhou dizendo que não encontrou `DATABASE_URL`**: revise o Passo 2
-  — a variável precisa se chamar exatamente `DATABASE_URL` e estar marcada
-  para o ambiente **Production**.
-- **Login não funciona / sessão não gruda**: confira se `NEXTAUTH_URL` é
-  exatamente o endereço `https://...vercel.app` do projeto, sem barra no
-  final, e se `NEXTAUTH_SECRET` e `AUTH_SECRET` têm o mesmo valor.
+- **O sistema abre na tela "Falta conectar um banco de dados"**: é o Passo 2
+  que ficou pela metade. A variável precisa se chamar exatamente
+  `DATABASE_URL` e estar marcada nas **três** caixas — Production, Preview e
+  Development. Marcada só em Production, o endereço da branch (aquele com
+  `-git-` no meio) continua caindo nessa tela, porque ele roda no ambiente
+  **Preview**. Depois de corrigir, clique em **Redeploy**.
+- **Login não funciona / sessão não gruda**: não é preciso configurar
+  `NEXTAUTH_URL` nem os segredos — o sistema resolve sozinho. Se você chegou
+  a criar `NEXTAUTH_SECRET` e `AUTH_SECRET`, confira que os dois têm o mesmo
+  valor; valores diferentes derrubam a sessão.
 - **Qualquer variável nova só tem efeito depois de um novo deploy**: use o
   botão **Redeploy** na aba **Deployments**.

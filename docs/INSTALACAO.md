@@ -89,14 +89,18 @@ Abra o terminal na pasta do sistema e rode:
 
 O sistema abre no navegador. Entre com:
 
-| Campo   | Valor           |
-| ------- | --------------- |
-| Usuário | `admin`         |
-| Senha   | `menegatti2024` |
+| Campo   | Valor              |
+| ------- | ------------------ |
+| Usuário | `Menegatti`        |
+| Senha   | `Menegatti26fin`   |
 
 **Troque a senha agora**, em *Configurações → Empresa → Credenciais de
 acesso*. Essa senha é a única coisa entre o computador e todos os números
-financeiros da empresa.
+financeiros da empresa. Depois de trocada por essa tela, ela é sua — nenhuma
+reinstalação a desfaz.
+
+Anote também o **código de recuperação** que apareceu durante a instalação.
+É com ele que se volta a entrar caso a senha seja esquecida.
 
 Pronto. O sistema já vem com os parâmetros da Menegatti carregados — a folha,
 os cinco centros de custo, as taxas por hora — e pode orçar o primeiro serviço
@@ -250,7 +254,11 @@ npm run db:studio
 ```
 
 Apague o registro da tabela `User` e depois rode `npm run db:seed`. O usuário
-`admin` volta com a senha `menegatti2024`.
+`Menegatti` volta com a senha `Menegatti26fin`.
+
+Mais simples que isso: rode `REDEFINIR_ACESSO=1 npm run db:seed` (no Windows,
+`set REDEFINIR_ACESSO=1` antes). Sem apagar nada, o acesso volta às mesmas
+credenciais.
 
 ---
 

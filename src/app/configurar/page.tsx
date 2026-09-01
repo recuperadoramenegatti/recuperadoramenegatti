@@ -27,10 +27,11 @@ const EXPLICACOES: Record<MotivoIndisponivel, Explicacao> = {
       'os dados. É o último passo da publicação, e é feito pelo painel da Vercel.',
     passos: [
       'No painel da Vercel, abra este projeto e clique na aba "Storage".',
-      'Clique em "Create Database" e escolha Postgres. Dê um nome como menegatti-db.',
+      'Clique em "Create Database", escolha Postgres (aparece como Neon nas contas novas) e dê um nome como menegatti-db.',
       'Clique em "Connect" para ligar o banco a este projeto.',
-      'Vá em Settings → Environment Variables e confira que existe uma variável chamada exatamente DATABASE_URL. Se a integração criou com outro nome (POSTGRES_URL ou POSTGRES_PRISMA_URL), copie o valor dela para uma nova variável DATABASE_URL.',
-      'Volte em Deployments e clique em "Redeploy" no deploy mais recente.',
+      'Vá em Settings → Environment Variables e confira que existe uma variável chamada exatamente DATABASE_URL. Se a integração criou com outro nome (POSTGRES_URL ou POSTGRES_PRISMA_URL ou DATABASE_POSTGRES_URL), copie o valor dela para uma variável nova chamada DATABASE_URL.',
+      'Nessa mesma variável, deixe as TRÊS caixas marcadas: Production, Preview e Development. É o engano mais comum — marcada só em Production, o endereço da versão de teste continua caindo nesta tela.',
+      'Volte em Deployments e clique nos três pontinhos do deploy mais recente → "Redeploy". Aguarde terminar e recarregue esta página.',
     ],
   },
   url_incompativel: {
@@ -43,6 +44,7 @@ const EXPLICACOES: Record<MotivoIndisponivel, Explicacao> = {
       'No painel da Vercel, aba "Storage", crie um banco Postgres.',
       'Conecte-o ao projeto.',
       'Em Settings → Environment Variables, troque o valor de DATABASE_URL pela conexão do Postgres (começa com postgres://).',
+      'Confira que a variável está marcada para Production, Preview e Development — as três.',
       'Clique em "Redeploy".',
     ],
   },
