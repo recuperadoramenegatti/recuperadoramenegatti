@@ -47,7 +47,23 @@ export function FormularioLogin({ className }: { className?: string }): React.JS
       });
 
       if (!resultado || resultado.error) {
-        const mensagem = 'Usuário ou senha inválidos.';
+        // Nem toda falha aqui é senha errada. O NextAuth também devolve erro
+        // quando FALTA CONFIGURAÇÃO — sem o segredo de sessão, por exemplo,
+        // nenhum login passa. Dizer "senha inválida" nesse caso manda a
+        // pessoa tentar de novo a senha certa, sem chance de acertar; foi
+        // exatamente o que aconteceu na primeira publicação do sistema.
+        //
+        // "CredentialsSignin" é o código que o NextAuth usa para credencial
+        // recusada. Qualquer outro código é problema de configuração ou de
+        // infraestrutura, e merece uma mensagem que aponte para lá.
+        const credencialRecusada =
+          !resultado?.error || resultado.error === 'CredentialsSignin';
+
+        const mensagem = credencialRecusada
+          ? 'Usuário ou senha inválidos.'
+          : 'O sistema não conseguiu concluir o login por um problema de configuração — ' +
+            'não é a sua senha. Abra a página /configurar para ver o que falta.';
+
         setErroGeral(mensagem);
         toast.error(mensagem);
         return;

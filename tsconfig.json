@@ -19,5 +19,13 @@
     "paths": { "@/*": ["./src/*"] }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    // installer/windows/build/ guarda uma CÓPIA do código-fonte, montada por
+    // `git archive` na hora de gerar o instalador do Windows. Sem excluí-la, o
+    // TypeScript compila o projeto duas vezes e reporta erros da cópia velha —
+    // e como o `next build` roda o typecheck, uma pasta de build esquecida no
+    // disco passa a QUEBRAR o build do projeto.
+    "installer/windows/build"
+  ]
 }
