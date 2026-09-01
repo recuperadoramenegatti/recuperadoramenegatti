@@ -52,18 +52,30 @@ const EXPLICACOES: Record<MotivoIndisponivel, Explicacao> = {
     },
   },
   url_incompativel: {
-    titulo: 'O banco configurado não serve para este servidor',
+    titulo: 'Falta trocar o endereço do banco de dados',
     resumo:
-      'A configuração aponta para um arquivo SQLite. Isso funciona no computador ' +
-      'da empresa, onde o arquivo fica no disco — mas este servidor não guarda ' +
-      'arquivos entre um acesso e outro, então os dados sumiriam.',
+      'A variável DATABASE_URL existe, mas aponta para um arquivo SQLite ' +
+      '(file:...) — o valor de exemplo, feito para o computador da empresa. ' +
+      'Lá funciona, porque o arquivo fica no disco. Aqui não: este servidor ' +
+      'não guarda arquivos entre um acesso e outro, então tudo que fosse ' +
+      'salvo sumiria. É preciso um banco de verdade, e trocar esse valor por ' +
+      'ele. Nada precisa ser criado na Vercel — só o valor muda.',
     passos: [
-      'No painel da Vercel, aba "Storage", crie um banco Postgres.',
-      'Conecte-o ao projeto.',
-      'Em Settings → Environment Variables, troque o valor de DATABASE_URL pela conexão do Postgres (começa com postgres://).',
-      'Confira que a variável está marcada para Production, Preview e Development — as três.',
-      'Clique em "Redeploy".',
+      'Abra neon.com e crie a conta (dá para entrar com o GitHub, sem cartão).',
+      'Crie um projeto. A tela seguinte mostra a "Connection string": um texto que começa com postgresql://. Copie inteiro. Se houver a opção "Pooled connection", prefira ela.',
+      'Na Vercel, vá em Settings → Environment Variables e ache a DATABASE_URL que já existe.',
+      'Troque o valor dela por esse texto. É só apagar o file:... e colar no lugar.',
+      'Confirme que ela está marcada para Production, Preview e Development — as três.',
+      'Em Deployments, três pontinhos do deploy mais recente → "Redeploy". Ao terminar, recarregue esta página.',
     ],
+    alternativa: {
+      titulo: 'Por que não usar o banco da própria Vercel',
+      passos: [
+        'Dá, se a conta permitir: aba "Storage" → Create Database → Postgres → Connect. Ela mesma preenche a variável.',
+        'Mas o plano gratuito limita quantos bancos a conta pode ter. Se ela recusar, o caminho acima resolve igual — o sistema não sabe a diferença entre um Postgres e outro.',
+        'Serve qualquer Postgres: Neon, Supabase, Railway, ou um servidor da própria empresa.',
+      ],
+    },
   },
   sem_conexao: {
     titulo: 'Não foi possível falar com o banco de dados',
