@@ -15,6 +15,8 @@
     "parar": "node scripts/parar.mjs",
     "smoke": "tsx scripts/smoke-os.ts",
     "smoke:abrir": "node scripts/smoke-abrir.mjs",
+    "smoke:acesso": "tsx scripts/smoke-acesso.ts",
+    "smoke:autocura": "tsx scripts/smoke-autocura.ts",
     "smoke:backup": "tsx scripts/smoke-backup.ts",
     "smoke:login": "tsx scripts/smoke-login.ts",
     "smoke:recuperacao": "tsx scripts/smoke-recuperacao.ts",

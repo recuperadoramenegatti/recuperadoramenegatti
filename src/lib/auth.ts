@@ -1,8 +1,52 @@
 import NextAuth, { type NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
+import crypto from 'node:crypto';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+
+/**
+ * Segredo que assina a sessão.
+ *
+ * Se NEXTAUTH_SECRET (ou AUTH_SECRET) estiver configurado, é ele que vale —
+ * é o certo, e continua sendo o recomendado.
+ *
+ * Quando não está, DERIVAMOS um em vez de deixar `undefined`. O motivo é uma
+ * história real: o sistema foi publicado sem essa variável, e o efeito não foi
+ * um aviso claro — foi o login recusando TODA senha, com a mensagem "usuário
+ * ou senha inválidos". O dono passou dias convencido de que tinha esquecido a
+ * própria senha, trocou a senha, tentou de novo, e nada. Uma configuração
+ * esquecida não pode custar o acesso ao sistema inteiro.
+ *
+ * A derivação usa o DATABASE_URL, que é o único segredo que sempre existe
+ * quando a aplicação funciona:
+ *
+ *  - é estável entre deploys, então a sessão de quem está logado sobrevive a
+ *    uma nova publicação;
+ *  - é diferente em cada instalação, então dois sistemas não compartilham
+ *    segredo;
+ *  - quem o conhece já tem o banco inteiro — inclusive os hashes de senha —,
+ *    então derivar dele não abre porta nenhuma que já não estivesse aberta.
+ *
+ * O `sha256` com rótulo fixo garante que o valor usado aqui não seja a string
+ * de conexão em si, e sim algo dela derivado e de tamanho apropriado.
+ */
+function segredoDeSessao(): string {
+  const configurado = (process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET)?.trim();
+  if (configurado) return configurado;
+
+  const base = process.env.DATABASE_URL?.trim();
+  if (base) {
+    return crypto
+      .createHash('sha256')
+      .update(`menegatti:sessao:v1:${base}`)
+      .digest('base64');
+  }
+
+  // Sem banco não há sistema; a tela de configuração explica o que falta.
+  // Um valor efêmero aqui só evita que o NextAuth estoure antes disso.
+  return crypto.randomBytes(32).toString('base64');
+}
 
 /** Validação das credenciais de login. */
 export const schemaLogin = z.object({
@@ -135,8 +179,10 @@ export const configAuth: NextAuthConfig = {
       return session;
     },
   },
+  // trustHost: o endereço vem da própria requisição, então NEXTAUTH_URL deixa
+  // de ser obrigatório — uma variável a menos para faltar.
   trustHost: true,
-  secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
+  secret: segredoDeSessao(),
 };
 
 export const { handlers, auth, signIn, signOut } = NextAuth(configAuth);

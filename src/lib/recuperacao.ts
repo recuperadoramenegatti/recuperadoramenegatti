@@ -27,6 +27,7 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
 import { prisma } from '@/lib/prisma';
+import { marcarSenhaComoDoDono } from '@/lib/senha-definida';
 
 /** Chave do código de recuperação na tabela de configurações. */
 export const CHAVE_CODIGO = 'codigoRecuperacaoHash';
@@ -174,6 +175,9 @@ export async function recuperarSenha(
   if (!admin) return { trocada: false, codigoNovo: null };
 
   await prisma.user.update({ where: { id: admin.id }, data: { password: hash } });
+
+  // Recuperar a senha também é o dono escolhendo qual ela é.
+  await marcarSenhaComoDoDono();
 
   await prisma.logAlteracao
     .create({
