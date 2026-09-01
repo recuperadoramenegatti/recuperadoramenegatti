@@ -25,18 +25,45 @@ async function main(): Promise<void> {
   console.log('→ Semeando o banco da Recuperadora Menegatti…\n');
 
   // ── Usuário administrador ──────────────────────────────────────────────
+  //
+  // Em condições normais o seed NÃO mexe em quem já existe: rodar de novo
+  // não pode desfazer uma senha trocada pelo dono. Mas isso cria um beco sem
+  // saída — num banco já criado, mudar as credenciais aqui não teria efeito
+  // nenhum, e quem perdeu o acesso continuaria trancado do lado de fora.
+  //
+  // A variável REDEFINIR_ACESSO é a saída desse beco: quando presente, o seed
+  // devolve o acesso às credenciais configuradas acima. É explícita e fica
+  // sob controle de quem administra a hospedagem — e deve ser REMOVIDA depois
+  // de usada, senão todo deploy futuro desfaz a senha que o dono escolher.
   const senhaHash = await bcrypt.hash(CREDENCIAL_INICIAL.senha, 12);
-  const usuario = await prisma.user.upsert({
-    where: { email: CREDENCIAL_INICIAL.email },
-    update: {},
-    create: {
-      email: CREDENCIAL_INICIAL.email,
-      password: senhaHash,
-      name: CREDENCIAL_INICIAL.nome,
-      role: 'admin',
-    },
-  });
-  console.log(`  ✓ Usuário administrador: ${usuario.email}`);
+  const email = CREDENCIAL_INICIAL.email.trim().toLowerCase();
+  const redefinir = Boolean(process.env.REDEFINIR_ACESSO?.trim());
+
+  // Procura por qualquer usuário, não pelo e-mail configurado: se o cadastro
+  // atual tiver outro e-mail (uma instalação antiga com "admin", por
+  // exemplo), o certo é corrigi-lo — e não criar um segundo usuário ao lado.
+  const existente = await prisma.user.findFirst({ orderBy: { createdAt: 'asc' } });
+
+  if (!existente) {
+    const criado = await prisma.user.create({
+      data: { email, password: senhaHash, name: CREDENCIAL_INICIAL.nome, role: 'admin' },
+    });
+    console.log(`  ✓ Usuário administrador: ${criado.email}`);
+  } else if (redefinir) {
+    const atualizado = await prisma.user.update({
+      where: { id: existente.id },
+      data: { email, password: senhaHash, name: CREDENCIAL_INICIAL.nome, role: 'admin' },
+    });
+    console.log(`  ✓ Acesso REDEFINIDO: usuário "${atualizado.email}", senha reconfigurada.`);
+    console.log('    Remova a variável REDEFINIR_ACESSO agora — enquanto ela existir,');
+    console.log('    todo novo deploy vai desfazer a senha que você escolher.');
+  } else {
+    console.log(`  ✓ Usuário administrador já existe: ${existente.email} (mantido como está)`);
+    if (existente.email !== email) {
+      console.log(`    Atenção: o e-mail configurado é "${email}", mas o cadastro tem`);
+      console.log(`    "${existente.email}". Use REDEFINIR_ACESSO=1 para alinhar os dois.`);
+    }
+  }
 
   // ── Parâmetros financeiros ─────────────────────────────────────────────
   const chaves = Object.keys(PARAMETROS_DEFAULT) as Array<keyof ParametrosBase>;
