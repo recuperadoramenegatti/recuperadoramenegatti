@@ -26,12 +26,32 @@ Anthropic, usada apenas no Centro de Inteligência.
 
 ## Instalação
 
-**Para instalar na máquina da empresa, siga o guia passo a passo:
-[docs/INSTALACAO.md](docs/INSTALACAO.md).** Ele é escrito para quem não
-programa: dois cliques em `instalar.bat` no Windows, ou `./instalar.sh` no
-Linux e no macOS. O instalador cuida de tudo — dependências, segredo de
-sessão, banco, compilação, atalho na área de trabalho e início automático
-junto com o computador.
+Três formas de colocar o sistema no ar — escolha a que fizer mais sentido:
+
+### Opção 1 — Windows, instalador de um clique (mais fácil para a máquina da empresa)
+
+Baixe **`MenegattiERP-Setup.exe`**, dê dois cliques e siga o assistente —
+igual instalar qualquer programa. Não precisa instalar Node.js, nem abrir
+terminal, nem copiar pasta nenhuma; o instalador já traz tudo embutido.
+Os dados ficam fisicamente no computador da empresa. Passo a passo completo
+(incluindo como gerar/publicar este `.exe`):
+**[docs/INSTALACAO.md](docs/INSTALACAO.md#windows-instalador-de-um-clique-o-mais-fácil)**.
+
+### Opção 2 — Vercel, sem instalar nada no computador
+
+[![Deploy na Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Frecuperadoramenegatti%2Frecuperadoramenegatti%2Ftree%2Fclaude%2Fmenegatti-financial-system-jmoh5i&project-name=menegatti-erp&repository-name=menegatti-erp)
+
+Não precisa instalar Node.js nem abrir terminal — só o navegador. Os dados
+ficam num banco de dados na nuvem em vez de no computador da empresa. Guia
+completo, passo a passo: **[docs/DEPLOY_VERCEL.md](docs/DEPLOY_VERCEL.md)**.
+
+### Opção 3 — Linux, macOS, ou o caminho manual
+
+**Siga o guia passo a passo: [docs/INSTALACAO.md](docs/INSTALACAO.md).** Ele
+é escrito para quem não programa: dois cliques em `instalar.bat` no Windows,
+ou `./instalar.sh` no Linux e no macOS. O instalador cuida de tudo —
+dependências, segredo de sessão, banco, compilação, atalho na área de
+trabalho e início automático junto com o computador.
 
 O que segue é o caminho manual, para quem vai mexer no código.
 
@@ -93,17 +113,26 @@ alternativas estão em [docs/INSTALACAO.md](docs/INSTALACAO.md).
 
 ## Primeiro acesso
 
-| Campo   | Valor            |
-| ------- | ---------------- |
-| Usuário | `admin`          |
-| Senha   | `menegatti2024`  |
+| Campo   | Valor              |
+| ------- | ------------------ |
+| Usuário | `Menegatti`        |
+| Senha   | `Menegatti26fin`   |
 
-**Troque a senha imediatamente** em *Configurações → Empresa → Credenciais de
-acesso*. Ela é a única coisa entre o computador e todos os dados financeiros da
-empresa.
+**Troque a senha** em *Configurações → Empresa → Credenciais de acesso*. Ela é
+a única coisa entre o computador e todos os dados financeiros da empresa.
 
-A sessão dura 30 dias. Após 5 tentativas de login erradas, o usuário fica
-bloqueado por 15 minutos.
+A partir do momento em que você trocar a senha por essa tela, ela é sua:
+nenhuma instalação ou publicação futura a desfaz. Enquanto ainda for a senha
+de fábrica acima, cada publicação a realinha — é a rede de segurança que
+impede ficar trancado do lado de fora.
+
+Esqueceu? **Esqueci minha senha**, na tela de login, devolve o acesso pelo
+código de recuperação (mostrado no primeiro acesso e em *Configurações →
+Segurança*).
+
+A sessão dura 30 dias. Errar a senha não bloqueia a conta: cada erro seguido
+só faz a resposta demorar um pouco mais, até 5 segundos — o suficiente para
+travar quem tenta adivinhar, sem trancar quem se atrapalhou.
 
 ---
 

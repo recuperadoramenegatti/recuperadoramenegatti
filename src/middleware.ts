@@ -7,7 +7,17 @@ import { NextResponse, type NextRequest } from 'next/server';
  * acontece no `auth()` de cada layout e rota de API. Isso mantém o middleware
  * no runtime Edge sem arrastar Prisma nem bcrypt para dentro dele.
  */
-const ROTAS_PUBLICAS = ['/login'];
+/**
+ * `/configurar` é pública de propósito: ela existe justamente para quando o
+ * banco ainda não foi conectado, e nesse estado não há como validar login
+ * nenhum. Ela não mostra dado algum da empresa — só o que falta configurar.
+ */
+/**
+ * `/recuperar` também é pública, e tem de ser: quem esqueceu a senha não tem
+ * como se autenticar antes de recuperá-la. A proteção dela não é o login, é
+ * o código de recuperação — conferido no servidor, com freio contra chute.
+ */
+const ROTAS_PUBLICAS = ['/login', '/configurar', '/recuperar'];
 
 export function middleware(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
@@ -24,7 +34,10 @@ export function middleware(request: NextRequest): NextResponse {
     return NextResponse.redirect(url);
   }
 
-  if (temSessao && ehPublica) {
+  // Quem já entrou não precisa ver a tela de login de novo — mas `/configurar`
+  // fica de fora: mandar um usuário logado de volta ao dashboard quando é
+  // justamente o banco que está fora do ar criaria um ping-pong de redirects.
+  if (temSessao && ehPublica && !pathname.startsWith('/configurar')) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

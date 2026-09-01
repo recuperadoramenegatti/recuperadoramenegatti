@@ -298,8 +298,17 @@ export const CORES_GRAFICO = [
   '#84CC16',
 ];
 
+/**
+ * Credenciais de acesso do sistema.
+ *
+ * O `email` fica em MINÚSCULAS de propósito. A tela de login converte o que
+ * for digitado para minúsculas antes de procurar no banco, então um usuário
+ * gravado como "Menegatti" nunca seria encontrado — o login recusaria a senha
+ * certa para sempre, sem dizer o motivo. Quem digitar "Menegatti", "MENEGATTI"
+ * ou "menegatti" entra do mesmo jeito.
+ */
 export const CREDENCIAL_INICIAL = {
-  email: 'admin',
-  senha: 'menegatti2024',
-  nome: 'Administrador',
+  email: 'menegatti',
+  senha: 'Menegatti26fin',
+  nome: 'Menegatti',
 } as const;

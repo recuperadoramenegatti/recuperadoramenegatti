@@ -17,6 +17,8 @@ import {
   CREDENCIAL_INICIAL,
 } from '../src/lib/constants';
 import type { ParametrosBase } from '../src/types';
+import { garantirCodigo } from '../src/lib/recuperacao';
+import { CHAVE_SENHA_DEFINIDA } from '../src/lib/senha-definida';
 
 const prisma = new PrismaClient();
 
@@ -24,18 +26,55 @@ async function main(): Promise<void> {
   console.log('→ Semeando o banco da Recuperadora Menegatti…\n');
 
   // ── Usuário administrador ──────────────────────────────────────────────
+  //
+  // Em condições normais o seed NÃO mexe em quem já existe: rodar de novo
+  // não pode desfazer uma senha trocada pelo dono. Mas isso cria um beco sem
+  // saída — num banco já criado, mudar as credenciais aqui não teria efeito
+  // nenhum, e quem perdeu o acesso continuaria trancado do lado de fora.
+  //
+  // A variável REDEFINIR_ACESSO é a saída desse beco: quando presente, o seed
+  // devolve o acesso às credenciais configuradas acima. É explícita e fica
+  // sob controle de quem administra a hospedagem — e deve ser REMOVIDA depois
+  // de usada, senão todo deploy futuro desfaz a senha que o dono escolher.
   const senhaHash = await bcrypt.hash(CREDENCIAL_INICIAL.senha, 12);
-  const usuario = await prisma.user.upsert({
-    where: { email: CREDENCIAL_INICIAL.email },
-    update: {},
-    create: {
-      email: CREDENCIAL_INICIAL.email,
-      password: senhaHash,
-      name: CREDENCIAL_INICIAL.nome,
-      role: 'admin',
-    },
+  const email = CREDENCIAL_INICIAL.email.trim().toLowerCase();
+
+  // A senha só é preservada quando o DONO a trocou pela tela do sistema —
+  // e isso deixa uma marca no banco (CHAVE_SENHA_DEFINIDA). Enquanto essa
+  // marca não existe, a senha guardada é a que o seed pôs lá, e realinhá-la
+  // com a configuração não perde nada de ninguém.
+  //
+  // É o que impede o beco sem saída: numa instalação onde o acesso se perdeu
+  // e ninguém nunca trocou a senha conscientemente, publicar de novo devolve
+  // o acesso. Quem trocou a senha de propósito nunca a vê ser desfeita.
+  const marca = await prisma.configuracao.findUnique({
+    where: { chave: CHAVE_SENHA_DEFINIDA },
   });
-  console.log(`  ✓ Usuário administrador: ${usuario.email}`);
+  const donoDefiniuSenha = marca?.valor === 'true';
+  const redefinir = !donoDefiniuSenha || Boolean(process.env.REDEFINIR_ACESSO?.trim());
+
+  // Procura por qualquer usuário, não pelo e-mail configurado: se o cadastro
+  // atual tiver outro e-mail (uma instalação antiga com "admin", por
+  // exemplo), o certo é corrigi-lo — e não criar um segundo usuário ao lado.
+  const existente = await prisma.user.findFirst({ orderBy: { createdAt: 'asc' } });
+
+  if (!existente) {
+    const criado = await prisma.user.create({
+      data: { email, password: senhaHash, name: CREDENCIAL_INICIAL.nome, role: 'admin' },
+    });
+    console.log(`  ✓ Usuário administrador: ${criado.email}`);
+  } else if (redefinir) {
+    const atualizado = await prisma.user.update({
+      where: { id: existente.id },
+      data: { email, password: senhaHash, name: CREDENCIAL_INICIAL.nome, role: 'admin' },
+    });
+    console.log(`  ✓ Acesso garantido: usuário "${atualizado.email}", senha padrão.`);
+    console.log('    (A senha só deixa de ser realinhada quando você trocá-la pela');
+    console.log('     tela do sistema — a partir daí ela é sua e ninguém a desfaz.)');
+  } else {
+    console.log(`  ✓ Usuário administrador: ${existente.email}`);
+    console.log('    Senha preservada: foi você quem a definiu pela tela do sistema.');
+  }
 
   // ── Parâmetros financeiros ─────────────────────────────────────────────
   const chaves = Object.keys(PARAMETROS_DEFAULT) as Array<keyof ParametrosBase>;
@@ -127,11 +166,29 @@ async function main(): Promise<void> {
     );
   }
 
+  // ── Código de recuperação ──────────────────────────────────────────────
+  // Só é criado se ainda não existir: trocar o código de quem já anotou o
+  // dele transformaria o papel guardado na gaveta em papel inútil.
+  const codigoNovo = await garantirCodigo();
+
   console.log('✓ Seed concluído.');
   console.log(
     `  Acesse com usuário "${CREDENCIAL_INICIAL.email}" e senha "${CREDENCIAL_INICIAL.senha}".`,
   );
   console.log('  Troque a senha em /configuracoes → Empresa.\n');
+
+  if (codigoNovo) {
+    console.log('  ┌──────────────────────────────────────────────────────┐');
+    console.log('  │  CÓDIGO DE RECUPERAÇÃO DE SENHA — ANOTE ESTE CÓDIGO  │');
+    console.log('  ├──────────────────────────────────────────────────────┤');
+    console.log(`  │            ${codigoNovo}                 │`);
+    console.log('  └──────────────────────────────────────────────────────┘');
+    console.log('    É com ele que se recupera o acesso caso a senha seja');
+    console.log('    esquecida. Guarde fora do computador — num papel, na');
+    console.log('    carteira, onde ficam os documentos da empresa.');
+    console.log('    Esta é a única vez que ele aparece: o banco guarda só');
+    console.log('    uma marca dele, não o código.\n');
+  }
 }
 
 main()

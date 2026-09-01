@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,6 +29,18 @@ export function FormularioLogin({ className }: { className?: string }): React.JS
   const [mostrarSenha, setMostrarSenha] = React.useState(false);
   const [erroGeral, setErroGeral] = React.useState<string | null>(null);
 
+  /**
+   * Quantas vezes o login falhou nesta tela.
+   *
+   * O servidor bloqueia por 15 minutos depois de 5 tentativas erradas, mas
+   * essa informação não chega até aqui: o NextAuth transforma o bloqueio no
+   * mesmo erro genérico de credencial recusada. Sem este contador, quem erra
+   * a senha algumas vezes passa a receber "usuário ou senha inválidos" mesmo
+   * depois de digitar a senha CERTA — e não tem como saber que é só esperar.
+   */
+  const [falhas, setFalhas] = React.useState(0);
+  const TENTATIVAS_ATE_BLOQUEIO = 5;
+
   const {
     register,
     handleSubmit,
@@ -47,11 +60,37 @@ export function FormularioLogin({ className }: { className?: string }): React.JS
       });
 
       if (!resultado || resultado.error) {
-        const mensagem = 'Usuário ou senha inválidos.';
+        // Nem toda falha aqui é senha errada. O NextAuth também devolve erro
+        // quando FALTA CONFIGURAÇÃO — sem o segredo de sessão, por exemplo,
+        // nenhum login passa. Dizer "senha inválida" nesse caso manda a
+        // pessoa tentar de novo a senha certa, sem chance de acertar; foi
+        // exatamente o que aconteceu na primeira publicação do sistema.
+        //
+        // "CredentialsSignin" é o código que o NextAuth usa para credencial
+        // recusada. Qualquer outro código é problema de configuração ou de
+        // infraestrutura, e merece uma mensagem que aponte para lá.
+        const credencialRecusada =
+          !resultado?.error || resultado.error === 'CredentialsSignin';
+
+        const falhasAgora = falhas + 1;
+        setFalhas(falhasAgora);
+
+        const mensagem = !credencialRecusada
+          ? 'O sistema não conseguiu concluir o login por um problema de configuração — ' +
+            'não é a sua senha. Abra a página /configurar para ver o que falta.'
+          : falhasAgora >= TENTATIVAS_ATE_BLOQUEIO
+            ? 'Usuário ou senha inválidos. Atenção: depois de ' +
+              `${TENTATIVAS_ATE_BLOQUEIO} tentativas erradas o sistema bloqueia o acesso por ` +
+              '15 minutos. Se você tem certeza da senha, espere 15 minutos antes de tentar ' +
+              'de novo — insistir agora só renova o bloqueio.'
+            : 'Usuário ou senha inválidos.';
+
         setErroGeral(mensagem);
         toast.error(mensagem);
         return;
       }
+
+      setFalhas(0);
 
       toast.success('Bem-vindo de volta!');
       router.push(destino);
@@ -127,6 +166,15 @@ export function FormularioLogin({ className }: { className?: string }): React.JS
         {!isSubmitting ? <LogIn className="h-4 w-4" /> : null}
         Entrar
       </Button>
+
+      <p className="pt-1 text-center">
+        <Link
+          href="/recuperar"
+          className="text-sm text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
+        >
+          Esqueci minha senha
+        </Link>
+      </p>
     </form>
   );
 }

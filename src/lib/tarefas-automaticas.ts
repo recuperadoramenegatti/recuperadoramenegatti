@@ -15,6 +15,14 @@
  *  3. No máximo uma verificação por hora por processo, com trava em memória
  *     para que navegações simultâneas não disparem o mesmo trabalho duas
  *     vezes.
+ *
+ * Na Vercel esse "processo" é uma função serverless: não há garantia de que
+ * o trabalho disparado sem `await` termine antes de a função ser encerrada
+ * após a resposta, e não há disco persistente para o backup semanal gravar.
+ * Por isso lá o backup automático é pulado — o botão de exportação manual
+ * (`/api/backup/exportar`) permanece o caminho de backup, rodando dentro do
+ * próprio ciclo de requisição/resposta. A verificação de insight mensal, que
+ * só lê e grava no banco, continua rodando em qualquer ambiente.
  */
 
 import { verificarBackupSemanal } from '@/lib/backup';
@@ -22,6 +30,7 @@ import { verificarInsightAutomatico } from '@/lib/ia';
 import { extrairMensagemErro } from '@/lib/utils';
 
 const INTERVALO_VERIFICACAO = 60 * 60 * 1000; // 1 hora
+const RODANDO_NA_VERCEL = process.env.VERCEL === '1';
 
 interface EstadoTarefas {
   ultimaVerificacao: number;
@@ -52,7 +61,7 @@ export function executarTarefasAutomaticas(): void {
 
   void (async () => {
     try {
-      await verificarBackupSemanal();
+      if (!RODANDO_NA_VERCEL) await verificarBackupSemanal();
       await verificarInsightAutomatico();
     } catch (erro) {
       console.error('[tarefas] Falha na manutenção automática:', extrairMensagemErro(erro));

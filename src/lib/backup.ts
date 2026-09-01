@@ -35,6 +35,15 @@ import type { MetadadosBackup, PreviewBackup } from '@/types';
 const MAX_INCREMENTAIS = 30;
 const MAX_SEMANAIS = 12;
 
+/**
+ * Na Vercel o sistema de arquivos é somente leitura e efêmero (exceto
+ * `/tmp`, que não sobrevive entre invocações) e o banco é Postgres, não
+ * SQLite — então não há disco para persistir backups nem banco para
+ * `VACUUM INTO`. O ZIP continua sendo gerado normalmente e entregue por
+ * download (`/api/backup/exportar`); só a cópia em disco é pulada.
+ */
+const RODANDO_NA_VERCEL = process.env.VERCEL === '1';
+
 export type TipoBackup = 'manual' | 'automatico_incremental' | 'automatico_semanal';
 
 const SUBPASTA: Record<TipoBackup, string> = {
@@ -133,6 +142,8 @@ function totaisDe(dados: DadosBackup): Record<string, number> {
  * e o Excel, e a limitação é registrada nos metadados.
  */
 async function copiarBancoSqlite(): Promise<Buffer | null> {
+  if (RODANDO_NA_VERCEL) return null; // Postgres na Vercel — não há SQLite para copiar.
+
   const destino = path.join(os.tmpdir(), `menegatti-snapshot-${Date.now()}.sqlite`);
   try {
     // O caminho vem de nós, não do usuário — mas é interpolado numa
@@ -230,16 +241,24 @@ export async function gerarBackupZip(tipo: TipoBackup = 'manual'): Promise<Backu
 //  PERSISTÊNCIA LOCAL E ROTAÇÃO
 // ═══════════════════════════════════════════════════════════════════════════
 
-/** Grava o backup em disco e registra na tabela `Backup`. */
+/**
+ * Grava o backup em disco (quando há disco persistente) e registra na
+ * tabela `Backup`. Na Vercel `caminho` fica `null` — o registro guarda
+ * apenas o histórico e os totais; o arquivo em si só existe no ZIP
+ * entregue no momento da geração, via download direto.
+ */
 export async function salvarBackupLocal(
   backup: BackupGerado,
   tipo: TipoBackup,
-): Promise<{ caminho: string; id: string }> {
-  const pasta = path.join(raizBackups(), SUBPASTA[tipo]);
-  await garantirPasta(pasta);
+): Promise<{ caminho: string | null; id: string }> {
+  let caminho: string | null = null;
 
-  const caminho = path.join(pasta, backup.filename);
-  await fs.writeFile(caminho, backup.buffer);
+  if (!RODANDO_NA_VERCEL) {
+    const pasta = path.join(raizBackups(), SUBPASTA[tipo]);
+    await garantirPasta(pasta);
+    caminho = path.join(pasta, backup.filename);
+    await fs.writeFile(caminho, backup.buffer);
+  }
 
   const registro = await prisma.backup.create({
     data: {
@@ -292,8 +311,15 @@ async function rotacionar(tipo: TipoBackup): Promise<void> {
  * para que a tela de backups mostre o problema.
  *
  * Um backup por hora, no máximo — 200 OS/mês não precisam de 200 ZIPs.
+ *
+ * Pulado na Vercel: é disparado sem `await` a partir de uma rota de API, e
+ * uma função serverless pode ser encerrada logo após a resposta, cortando o
+ * trabalho no meio — sem disco para persistir o ZIP de qualquer forma, o
+ * risco não compensa. O backup manual continua disponível a qualquer hora.
  */
 export async function agendarBackupIncremental(): Promise<void> {
+  if (RODANDO_NA_VERCEL) return;
+
   try {
     const ultimo = await prisma.backup.findFirst({
       where: { tipo: 'automatico_incremental' },

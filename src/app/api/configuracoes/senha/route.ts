@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { comSessao, erro, lerJson, ok } from '@/lib/api';
 import { schemaAlterarSenha } from '@/lib/validacoes';
+import { marcarSenhaComoDoDono } from '@/lib/senha-definida';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +21,9 @@ export async function PUT(request: Request): Promise<NextResponse> {
 
     const hash = await bcrypt.hash(dados.novaSenha, 12);
     await prisma.user.update({ where: { id: registro.id }, data: { password: hash } });
+
+    // A partir daqui a senha é do dono: nenhuma publicação futura a desfaz.
+    await marcarSenhaComoDoDono();
 
     await prisma.logAlteracao.create({
       data: {
