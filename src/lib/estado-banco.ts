@@ -46,6 +46,17 @@ interface Cache {
 
 const globalParaEstado = globalThis as unknown as { __estadoBancoMenegatti?: Cache };
 
+/**
+ * Estamos rodando num servidor da Vercel?
+ *
+ * VERCEL=1 é a variável canônica, mas ela só existe em execução quando o
+ * projeto expõe as variáveis de sistema — o que é uma opção, não um dado.
+ * VERCEL_URL e VERCEL_ENV cobrem os outros casos.
+ */
+function naVercel(): boolean {
+  return Boolean(process.env.VERCEL || process.env.VERCEL_URL || process.env.VERCEL_ENV);
+}
+
 function urlConfigurada(): EstadoBanco | null {
   const url = process.env.DATABASE_URL?.trim();
 
@@ -59,7 +70,14 @@ function urlConfigurada(): EstadoBanco | null {
 
   // SQLite em arquivo não sobrevive num servidor sem disco permanente. É um
   // engano comum ao publicar: copiar o valor do .env.example para a Vercel.
-  if (process.env.VERCEL === '1' && url.startsWith('file:')) {
+  //
+  // A checagem não pode depender só de VERCEL=1: essa variável só chega à
+  // execução se o projeto tiver ligado "Automatically expose System
+  // Environment Variables", e este projeto não tem. Sem isso o diagnóstico
+  // caía no genérico "não foi possível falar com o banco" — verdadeiro, mas
+  // inútil para quem precisa saber que o valor é que está errado. Por isso
+  // qualquer uma das variáveis que a Vercel define serve de indício.
+  if (naVercel() && url.startsWith('file:')) {
     return {
       pronto: false,
       motivo: 'url_incompativel',
@@ -100,11 +118,19 @@ async function diagnosticar(): Promise<EstadoBanco> {
     // para "não consegui alcançar o banco".
     const tabelaFaltando = /P2021|P2022|does not exist|no such table/i.test(mensagem);
 
-    return {
-      pronto: false,
-      motivo: tabelaFaltando ? 'sem_tabelas' : 'sem_conexao',
-      detalhe: mensagem,
-    };
+    // O Prisma recusa a URL antes de tentar conectar quando o protocolo não
+    // bate com o provider (P1012). Essa mensagem é a prova mais direta de que
+    // o valor da variável é que está errado — melhor que qualquer palpite a
+    // partir do ambiente, então ela tem prioridade.
+    const protocoloErrado = /P1012|must start with the protocol/i.test(mensagem);
+
+    const motivo: MotivoIndisponivel = protocoloErrado
+      ? 'url_incompativel'
+      : tabelaFaltando
+        ? 'sem_tabelas'
+        : 'sem_conexao';
+
+    return { pronto: false, motivo, detalhe: mensagem };
   }
 }
 
