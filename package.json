@@ -18,6 +18,7 @@
     "smoke:acesso": "tsx scripts/smoke-acesso.ts",
     "smoke:autocura": "tsx scripts/smoke-autocura.ts",
     "smoke:backup": "tsx scripts/smoke-backup.ts",
+    "smoke:diagnostico": "tsx scripts/smoke-diagnostico.ts",
     "smoke:login": "tsx scripts/smoke-login.ts",
     "smoke:recuperacao": "tsx scripts/smoke-recuperacao.ts",
     "smoke:tarefas": "tsx scripts/smoke-tarefas.ts",
